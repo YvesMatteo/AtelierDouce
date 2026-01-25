@@ -35,6 +35,7 @@ interface CJVariant {
     variantImage: string;
     variantSellPrice: number;
     variantStandard: string; // e.g., "Size:40,Color:Black"
+    variantKey?: string;
 }
 
 interface CJOrderRequest {
