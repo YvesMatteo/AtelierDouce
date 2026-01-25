@@ -16,6 +16,13 @@ export interface Product {
     is_active?: boolean;
     created_at?: string;
     updated_at?: string;
+    variants?: {
+        id: string; // cj_variant_id
+        sku?: string;
+        price?: number;
+        image?: string;
+        options: Record<string, string>; // e.g. { Color: "Red", Size: "M" }
+    }[];
 }
 
 export interface Order {

@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { Ovo, Nunito_Sans } from 'next/font/google';
 import './globals.css';
+import { Providers } from './providers';
+import Header from '@/components/Header';
+import CartDrawer from '@/components/CartDrawer';
 
 const ovo = Ovo({
   weight: '400',
@@ -18,9 +21,7 @@ const nunitoSans = Nunito_Sans({
 export const metadata: Metadata = {
   title: 'AtelierDouce | Premium Comfort',
   description: 'Premium slippers and home footwear.',
-  icons: {
-    icon: '/favicon.ico',
-  },
+
 };
 
 export default function RootLayout({
@@ -30,7 +31,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${ovo.variable} ${nunitoSans.variable}`}>
-      <body className="font-sans antialiased text-[#171717] bg-white">{children}</body>
+      <body className="font-sans antialiased text-[#171717] bg-white">
+        <Providers>
+          <Header />
+          <CartDrawer />
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { supabase } from '@/lib/supabase';
+import { processOrderToCJ } from '@/lib/automation';
 import Stripe from 'stripe';
 
 export async function POST(request: Request) {
@@ -77,11 +78,8 @@ export async function POST(request: Request) {
 
             console.log('📝 Order items saved');
 
-            // Optionally trigger CJ order creation here
-            // await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/cj/order`, {
-            //     method: 'POST',
-            //     body: JSON.stringify({ orderId: order.id }),
-            // });
+            // Trigger CJ order creation
+            await processOrderToCJ(order.id);
 
         } catch (error) {
             console.error('Error processing order:', error);

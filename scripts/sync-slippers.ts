@@ -104,8 +104,8 @@ async function syncProducts() {
             });
             console.log(`   💵 Stripe price: $${RETAIL_PRICE} (${stripePrice.id})`);
 
-            // Insert to Supabase
-            const { error: insertError } = await supabase.from('products').insert({
+            // Upsert to Supabase
+            const { error: insertError } = await supabase.from('products').upsert({
                 name: `${CJ_PRODUCT.name} - ${color.name}`,
                 description: CJ_PRODUCT.description,
                 price: RETAIL_PRICE,
@@ -119,12 +119,14 @@ async function syncProducts() {
                 ],
                 inventory: 10000,
                 is_active: true,
+            }, {
+                onConflict: 'cj_product_id'
             });
 
             if (insertError) {
                 console.error('   ❌ Supabase error:', insertError.message);
             } else {
-                console.log('   ✅ Synced to Supabase');
+                console.log('   ✅ Synced to Supabase (Upserted)');
             }
 
         } catch (error: any) {

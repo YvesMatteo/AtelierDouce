@@ -1,9 +1,11 @@
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import BuyButton from '@/components/BuyButton';
+import ProductActions from '@/components/ProductActions';
 import Link from 'next/link';
 import { Product } from '@/lib/types';
+import { headers } from 'next/headers';
+import { getCurrencyForCountry, calculatePrice, formatPrice, BASE_PRICE_USD } from '@/lib/currency';
 
 interface PageProps {
     params: Promise<{
@@ -32,10 +34,20 @@ async function getProduct(id: string): Promise<Product | null> {
 export default async function ProductPage({ params }: PageProps) {
     const { id } = await params;
     const product = await getProduct(id);
+    const headersList = await headers();
+    const country = headersList.get('x-vercel-ip-country') || 'US';
+    const { code, rate, symbol } = getCurrencyForCountry(country);
 
     if (!product) {
         notFound();
     }
+
+    const price = calculatePrice(BASE_PRICE_USD, rate);
+    const formattedPrice = formatPrice(price, code);
+
+    // Calculate a fake "compare at" price (e.g. 1.5x)
+    const originalPrice = Math.ceil(price * 1.5);
+    const formattedOriginalPrice = formatPrice(originalPrice, code);
 
     return (
         <div className="min-h-screen bg-white text-[#171717]">
@@ -55,35 +67,35 @@ export default async function ProductPage({ params }: PageProps) {
                 <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
                     {/* Images Column */}
                     <div className="space-y-2">
-                        <div className="aspect-[4/5] relative bg-[#f5f5f5] w-full">
+                        <div className="aspect-[4/5] relative bg-white w-full overflow-hidden">
                             <Image
                                 src={product.images?.[0] || '/placeholder.jpg'}
                                 alt={product.name}
                                 fill
-                                className="object-cover"
+                                className="object-cover scale-[1.15] origin-bottom"
                                 priority
                             />
                         </div>
                         {/* Thumbnails grid */}
                         <div className="grid grid-cols-2 gap-2">
                             {product.images?.slice(1, 3).map((img, idx) => (
-                                <div key={idx} className="aspect-[4/5] relative bg-[#f5f5f5]">
+                                <div key={idx} className="aspect-[4/5] relative bg-white overflow-hidden">
                                     <Image
                                         src={img}
                                         alt={`${product.name} ${idx + 2}`}
                                         fill
-                                        className="object-cover"
+                                        className="object-cover scale-[1.15] origin-bottom"
                                     />
                                 </div>
                             ))}
                         </div>
                         {product.images && product.images.length > 3 && (
-                            <div className="aspect-[4/5] relative bg-[#f5f5f5] w-full">
+                            <div className="aspect-[4/5] relative bg-white w-full overflow-hidden">
                                 <Image
                                     src={product.images[3]}
                                     alt={`${product.name} 4`}
                                     fill
-                                    className="object-cover"
+                                    className="object-cover scale-[1.15] origin-bottom"
                                 />
                             </div>
                         )}
@@ -100,11 +112,11 @@ export default async function ProductPage({ params }: PageProps) {
                             </h1>
                             <div className="flex items-center gap-4 border-b border-dashed border-gray-200 pb-8">
                                 <span className="text-xl font-sans text-[#171717]">
-                                    ${product.price.toFixed(2)}
+                                    {formattedPrice}
                                 </span>
                                 {/* Optional: Compare price */}
                                 <span className="text-lg text-[#959595] line-through font-light">
-                                    ${(product.price * 1.5).toFixed(2)}
+                                    {formattedOriginalPrice}
                                 </span>
                             </div>
                         </div>
@@ -120,45 +132,11 @@ export default async function ProductPage({ params }: PageProps) {
                         </div>
 
                         {/* Controls */}
-                        <div className="space-y-6">
-                            {/* Color (if there were other color products, we could link them here) */}
-                            {/* Size Selector */}
-                            {product.options && product.options.find(o => o.name === 'Size') && (
-                                <div>
-                                    <div className="flex justify-between items-center mb-3">
-                                        <label className="text-[13px] font-bold uppercase tracking-wider text-[#171717]">
-                                            Size
-                                        </label>
-                                        <button className="text-[11px] underline text-[#5e5e5e] hover:text-[#171717]">
-                                            Size Guide
-                                        </button>
-                                    </div>
-                                    <div className="flex flex-wrap gap-2">
-                                        {product.options.find(o => o.name === 'Size')?.values.map((val) => (
-                                            <button
-                                                key={val}
-                                                className="h-10 px-6 border border-[#e5e5e5] text-sm hover:border-[#171717] hover:bg-[#171717] hover:text-white transition-all duration-200 min-w-[3rem]"
-                                            >
-                                                {val}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Add to Cart / Buy Buttons */}
-                            <div className="pt-4 space-y-3">
-                                <BuyButton
-                                    productId={product.id}
-                                    productName={product.name}
-                                    price={product.price}
-                                    image={product.images?.[0] || ''}
-                                />
-                                <p className="text-[11px] text-[#5e5e5e] text-center pt-2">
-                                    Free shipping on all orders over $100.
-                                </p>
-                            </div>
-                        </div>
+                        <ProductActions
+                            product={product}
+                            currentPrice={price}
+                            currencyCode={code}
+                        />
 
                         {/* Accordions / Extra Info */}
                         <div className="mt-12 border-t border-gray-100">
