@@ -50,6 +50,9 @@ export async function POST(request: Request) {
                     currency: currencyCode.toLowerCase(),
                     product_data: {
                         name: product.name,
+                        description: selectedOptions
+                            ? Object.entries(selectedOptions).map(([k, v]) => `${k}: ${v}`).join(', ')
+                            : undefined,
                         images: product.images || [],
                         metadata: {
                             product_id: product.id,

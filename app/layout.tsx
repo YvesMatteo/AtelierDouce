@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import { Ovo, Nunito_Sans } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
-import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
 import CartDrawer from '@/components/CartDrawer';
+import Footer from '@/components/Footer';
 
 const ovo = Ovo({
   weight: '400',
@@ -33,9 +34,14 @@ export default function RootLayout({
     <html lang="en" className={`${ovo.variable} ${nunitoSans.variable}`}>
       <body className="font-sans antialiased text-[#171717] bg-white">
         <Providers>
-          <Header />
+          <Sidebar />
           <CartDrawer />
-          {children}
+          <div className="flex flex-col min-h-screen">
+            <div className="flex-grow">
+              {children}
+            </div>
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

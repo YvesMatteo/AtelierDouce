@@ -52,16 +52,7 @@ export default async function ProductPage({ params }: PageProps) {
     return (
         <div className="min-h-screen bg-white text-[#171717]">
             {/* Navigation (Simple) */}
-            <nav className="border-b border-gray-100 py-6 px-6 md:px-12">
-                <div className="max-w-[1400px] mx-auto flex items-center justify-between">
-                    <Link href="/" className="text-2xl font-serif tracking-widest text-center uppercase hover:text-[#a48354] transition-colors">
-                        AtelierDouce
-                    </Link>
-                    <Link href="/" className="text-[13px] tracking-[0.05em] font-sans uppercase font-bold hover:text-[#a48354] transition-colors">
-                        Close
-                    </Link>
-                </div>
-            </nav>
+            {/* Navigation (Simple) - REMOVED, using global Sidebar */}
 
             <div className="pt-12 pb-24 md:pt-20">
                 <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
