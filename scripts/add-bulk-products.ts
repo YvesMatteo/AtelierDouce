@@ -7,6 +7,7 @@ import 'dotenv/config';
 import { getCJClient, CJVariant } from '../lib/cjdropshipping';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
+import { cleanProductDescription } from './utils';
 
 // Initialize clients
 const supabase = createClient(
@@ -148,9 +149,12 @@ async function addProducts() {
                 const mainImg = isValidUrl(processedVariants[0]?.image) ? processedVariants[0].image : (Array.isArray(details.productImage) ? details.productImage[0] : details.productImage);
 
                 try {
+                    const cleanDesc = cleanProductDescription(details.description);
+                    const productDesc = cleanDesc.length > 20 ? cleanDesc : `Premium ${item.name}. Quality materials and stylish design.`;
+
                     const sProd = await stripe.products.create({
                         name: item.name,
-                        description: details.description?.substring(0, 500) || item.name,
+                        description: productDesc,
                         images: isValidUrl(mainImg) ? [mainImg] : [],
                         metadata: { cj_product_id: item.id, category: item.category, gender: item.gender }
                     });
@@ -182,7 +186,7 @@ async function addProducts() {
                 .upsert({
                     cj_product_id: item.id,
                     name: item.name,
-                    description: cleanDescription(details.description) || item.name,
+                    description: cleanProductDescription(details.description) || item.name,
                     price: retailPrice,
                     images: imgs,
                     cj_sku: details.productSku,
@@ -233,13 +237,6 @@ function isValidUrl(url: string | undefined): boolean {
     try { new URL(url); return true; } catch { return false; }
 }
 
-function cleanDescription(html: string | undefined): string {
-    if (!html) return '';
-    // Remove HTML tags
-    let text = html.replace(/<[^>]*>?/gm, ' ');
-    // Remove multiple spaces/newlines
-    text = text.replace(/\s+/g, ' ').trim();
-    return text;
-}
+
 
 addProducts().catch(console.error);

@@ -8,7 +8,7 @@ export default function Footer() {
                 {/* Brand */}
                 <div className="col-span-1 md:col-span-1">
                     <Link href="/" className="text-xl font-serif tracking-widest uppercase hover:text-[#a48354] transition-colors">
-                        AtelierDouce
+                        Atelier Douce
                     </Link>
                     <p className="mt-4 text-sm text-gray-400">
                         Premium comfort for your home.
@@ -38,7 +38,7 @@ export default function Footer() {
             </div>
 
             <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-sm text-gray-500">
-                <p>&copy; {new Date().getFullYear()} AtelierDouce. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} Atelier Douce. All rights reserved.</p>
             </div>
         </footer>
     );

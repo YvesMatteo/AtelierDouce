@@ -1,10 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 import CartIcon from './CartIcon';
+import SearchModal from './SearchModal';
 
 export default function Header() {
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+
     return (
         <>
             {/* Top Bar */}
@@ -26,13 +30,19 @@ export default function Header() {
                     </Link>
 
                     <div className="flex items-center gap-6">
-                        <button className="hover:text-[#a48354] transition-colors">
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className="hover:text-[#a48354] transition-colors"
+                            aria-label="Search products"
+                        >
                             <Search className="w-5 h-5" strokeWidth={1} />
                         </button>
                         <CartIcon />
                     </div>
                 </div>
             </nav>
+
+            <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         </>
     );
 }

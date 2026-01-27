@@ -1,4 +1,4 @@
-
+import { cleanProductDescription, cleanProductName, removeChinese } from './utils';
 import 'dotenv/config';
 import { getCJClient } from '../lib/cjdropshipping';
 import { createClient } from '@supabase/supabase-js';
@@ -9,8 +9,36 @@ import Stripe from 'stripe';
 // ==========================================
 
 const TARGET_PRODUCT_IDS = [
-    // '1578244934304542720', // Pearl Necklace
+    '2000862978889248769', // Down Jacket Ag1-1105
+    '1735282529143365632', // Chessboard Plaid Knitted Hat
+    '2508241410251629900', // Gray Suit Jacket Women's Woolen
+    '2601140940251636900', // Womens Stylish Suede Stiletto Boots
+    '2511010923041613300', // Fashion Individual Casual Cotton Slippers
+    '2510140745261632700', // Women's Autumn And Winter Style Casual
+    '2412070355501627400', // Solid Color Versatile Winter Warm
+    '2511280758221607400', // Indoor Warm Anti-slip Thick Sole
+    '1550458464835743744', // Women's Warm Casual Knitted Octagonal
+    '2512020833381633000', // Thick Puffer Jacket
     '1626869424990990336', // High-grade Short Coat
+    '1746094682741936128', // Bag Cloud Bag Niche Plaid
+    '1672132490384904192', // All-in-one Simple Pocket Coin Purse
+    '1749986964654272512', // Girl Thickened Warm Wool Socks
+    '1544965318324531200', // New Lapel Clean Single Breasted
+    '1578244934304542720', // Simple Fashion Pearl Necklace
+    '1381486068892831744', // Minimalist Brand Hoop Circle Earring
+    '2411190554561614400', // Women's Casual Hooded Cotton Jacket
+    '2512240513531625200', // Womens Fashionable Platform Snow Boots
+    '2501070601131628700', // Winter Coat Warm Lapel Long Fluffy
+    // '7FE80359-83EB-412E-BB50-F8C4DB86E1AA', // Hood Warm Jacket (non-standard ID, skip)
+    '1839114473198997504', // Winter Snow Boots With Bowknot
+    '2512050318251608500', // Women's Short-tube Snow Boots
+    // '516732AB-1D5F-49F7-BE3F-17BD08B6945A', // Star Studded Diamond (non-standard ID, skip)
+    '1405411242029486080', // Women's Bag Shoulder Bag
+    '2512110858151626600', // Large-sized Cotton Slippers
+    '2511300843381609000', // Detachable Hooded Zip-up Cotton Coat
+    '2511050858251614900', // Autumn Western Pleated Short
+    '2511150813301617800', // Fashionable And Versatile Fleece-lined
+    '1760130972168761344', // Fashion Plaid Scarf For Women
 ];
 
 // ==========================================
@@ -44,6 +72,47 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2023-10-16' as any,
 });
 
+// ==========================================
+// 1.2 CATEGORY MAPPING
+// ==========================================
+const VALID_CATEGORIES = ['Clothing', 'Shoes', 'Bags', 'Jewelry', 'Accessories'];
+
+const PRODUCT_CATEGORY_OVERRIDES: Record<string, string> = {
+    '1578244934304542720': 'Jewelry', // Pearl Necklace
+    '1626869424990990336': 'Clothing', // High-grade Short Coat
+};
+
+function determineCategory(name: string, cjId: string): string {
+    if (PRODUCT_CATEGORY_OVERRIDES[cjId]) {
+        return PRODUCT_CATEGORY_OVERRIDES[cjId];
+    }
+
+    const lowerName = name.toLowerCase();
+
+    // 1. Jewelry
+    if (lowerName.includes('necklace') || lowerName.includes('ring') || lowerName.includes('earring') || lowerName.includes('bracelet') || lowerName.includes('pearl') || lowerName.includes('diamond') || lowerName.includes('stud') || lowerName.includes('jewelry') ||
+        lowerName.includes('项链') || lowerName.includes('戒指') || lowerName.includes('耳环') || lowerName.includes('手镯') || lowerName.includes('首饰')) return 'Jewelry';
+
+    // 2. Shoes
+    if (lowerName.includes('shoe') || lowerName.includes('boot') || lowerName.includes('sandal') || lowerName.includes('sneaker') || lowerName.includes('slipper') || lowerName.includes('heel') || lowerName.includes('flat') ||
+        lowerName.includes('鞋') || lowerName.includes('靴') || lowerName.includes('拖')) return 'Shoes';
+
+    // 3. Bags
+    if (lowerName.includes('bag') || lowerName.includes('tote') || lowerName.includes('purse') || lowerName.includes('wallet') ||
+        lowerName.includes('女包') || lowerName.includes('钱包') || lowerName.includes('单肩') || lowerName.includes('手提')) return 'Bags';
+
+    // 4. Specific Clothing (to avoid hooded jackets matching 'hat')
+    if (lowerName.includes('jacket') || lowerName.includes('coat') || lowerName.includes('suit') || lowerName.includes('sweater') || lowerName.includes('blazer') ||
+        lowerName.includes('棉服') || lowerName.includes('外套') || lowerName.includes('大衣') || lowerName.includes('夹克') || lowerName.includes('西装') || lowerName.includes('开衫')) return 'Clothing';
+
+    // 5. Accessories
+    if (lowerName.includes('scarf') || lowerName.includes('hat') || lowerName.includes('glove') || lowerName.includes('belt') || lowerName.includes('glass') || lowerName.includes('octagonal') || lowerName.includes('beanie') || lowerName.includes('cap') || lowerName.includes('sock') ||
+        lowerName.includes('帽') || lowerName.includes('巾') || lowerName.includes('袜') || lowerName.includes('手套') || lowerName.includes('腰带') || lowerName.includes('眼镜')) return 'Accessories';
+
+    // Default to Clothing
+    return 'Clothing';
+}
+
 async function main() {
     console.log('🚀 Starting automated product import...\n');
     const cj = getCJClient();
@@ -72,8 +141,12 @@ async function main() {
                 'Style': new Set()
             };
 
+            const variantsData: any[] = [];
+
             details.variants?.forEach((v: any) => {
                 if (v.variantImage) imagesSet.add(v.variantImage);
+
+                let variantOptions: Record<string, string> = {};
 
                 // Parse options from variantKey (e.g. "Beige-XS" or "Red-40")
                 if (v.variantKey) {
@@ -87,28 +160,51 @@ async function main() {
                         const isSize = (str: string) => /^(XS|S|M|L|XL|XXL|[0-9.]+|One Size)$/i.test(str) || !isNaN(parseFloat(str));
 
                         if (isSize(p2)) {
-                            variantValues['Color'].add(p1);
+                            const c1 = removeChinese(p1);
+                            variantValues['Color'].add(c1);
                             variantValues['Size'].add(p2);
+                            variantOptions['Color'] = c1;
+                            variantOptions['Size'] = p2;
                         } else if (isSize(p1)) {
+                            const c2 = removeChinese(p2);
                             variantValues['Size'].add(p1);
-                            variantValues['Color'].add(p2);
+                            variantValues['Color'].add(c2);
+                            variantOptions['Size'] = p1;
+                            variantOptions['Color'] = c2;
                         } else {
                             // Default to Style-Option?
-                            variantValues['Style'].add(p1);
-                            // variantValues['Option'].add(p2); // Option not init in predefined
+                            const c1 = removeChinese(p1);
+                            const c2 = removeChinese(p2);
+                            variantValues['Style'].add(c1);
                             if (!variantValues['Option']) variantValues['Option'] = new Set();
-                            variantValues['Option'].add(p2);
+                            variantValues['Option'].add(c2);
+                            variantOptions['Style'] = c1;
+                            variantOptions['Option'] = c2;
                         }
                     } else if (parts.length === 1) {
                         // Likely just Color or Style
-                        variantValues['Color'].add(parts[0].trim());
+                        const c = removeChinese(parts[0].trim());
+                        variantValues['Color'].add(c);
+                        variantOptions['Color'] = c;
                     } else {
                         // 3+ parts? Just add whole thing as 'Standard'
+                        const c = removeChinese(v.variantKey);
                         if (!variantValues['Standard']) variantValues['Standard'] = new Set();
-                        variantValues['Standard'].add(v.variantKey);
+                        variantValues['Standard'].add(c);
+                        variantOptions['Standard'] = c;
                     }
                 }
+
+                variantsData.push({
+                    id: v.vid,
+                    sku: v.variantSku,
+                    image: v.variantImage,
+                    price: v.variantSellPrice,
+                    options: variantOptions
+                });
             });
+
+
 
             // Convert Set to Array for product.images
             let finalImages = Array.from(imagesSet)
@@ -154,27 +250,33 @@ async function main() {
             // Calculate Price (Handle string range like "58.05-60.00")
             const sellPriceStr = String(details.sellPrice).split('-')[0].trim();
             const costPrice = parseFloat(sellPriceStr) || 20;
-            const retailPrice = Math.ceil(costPrice * 3);
+            const retailPrice = Math.ceil(costPrice * 3.5) - 0.05;
 
-            let productName = formatProductName(details.productName);
+            let productName = cleanProductName(details.productName);
             if (PRODUCT_NAME_OVERRIDES[cjProductId]) {
                 productName = PRODUCT_NAME_OVERRIDES[cjProductId];
             }
 
-            const productDesc = details.description || `Premium ${productName}. Quality materials and stylish design.`;
+            const cleanDesc = cleanProductDescription(details.description);
+            const productDesc = cleanDesc.length > 20 ? cleanDesc : `Premium ${productName}. Quality materials and stylish design.`;
 
+
+            const productCategory = determineCategory(productName, cjProductId);
 
             const productData = {
                 cjProductId: details.pid,
                 name: productName,
                 description: productDesc,
                 price: retailPrice,
+                category: productCategory,
                 images: finalImages,
                 cjSku: details.productSku,
-                options: options
+                options: options,
+                variants: variantsData
             };
 
             console.log(`   🎨 Colors/Options found: ${options.map(o => `${o.name}: ${o.values.length}`).join(', ')}`);
+            console.log(`   🏷️  Category assigned: ${productCategory}`);
             console.log(`   📸 Images count before valid filter: ${finalImages.length}`);
 
             // SPECIAL FIX for "High-grade Short Coat" (1626869424990990336)
@@ -232,19 +334,25 @@ async function main() {
                     console.log('   ✅ Already exists in Supabase, updating...');
                     stripeProductId = existingProduct.stripe_product_id;
 
-                    if (stripeImages.length > 0) {
-                        try {
-                            await stripe.products.update(stripeProductId, {
-                                images: stripeImages,
-                                description: productData.description,
-                                name: productData.name
-                            });
-                        } catch (stripeErr: any) {
-                            console.error(`   ⚠️ Stripe update failed: ${stripeErr.message}`);
-                        }
+                    // Update product details
+                    try {
+                        await stripe.products.update(stripeProductId, {
+                            images: stripeImages,
+                            description: productData.description,
+                            name: productData.name
+                        });
+                    } catch (stripeErr: any) {
+                        console.error(`   ⚠️ Stripe update failed: ${stripeErr.message}`);
                     }
 
-                    stripePriceId = existingProduct.stripe_price_id;
+                    // Create NEW price to ensure update
+                    const stripePrice = await stripe.prices.create({
+                        product: stripeProductId,
+                        unit_amount: Math.round(productData.price * 100),
+                        currency: 'usd',
+                    });
+                    stripePriceId = stripePrice.id;
+                    console.log(`   💵 Updated Stripe price: $${productData.price} (${stripePriceId})`);
                 } else if (stripeImages.length > 0) {
                     console.log('   💳 Creating Stripe product...');
                     const stripeProduct = await stripe.products.create({
@@ -288,7 +396,9 @@ async function main() {
                     cj_sku: productData.cjSku,
                     stripe_product_id: stripeProductId,
                     stripe_price_id: stripePriceId,
+                    category: productData.category,
                     options: productData.options,
+                    variants: productData.variants,
                     inventory: totalInventory,
                     is_active: true,
                     updated_at: new Date().toISOString(),
@@ -312,15 +422,6 @@ async function main() {
     }
 
     console.log('\n✨ Import process finished.');
-}
-
-function formatProductName(name: string): string {
-    return name
-        .replace(/\s+/g, ' ')
-        .split(' ')
-        .slice(0, 8)
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
 }
 
 main().catch(console.error);

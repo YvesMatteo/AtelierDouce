@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X, ShoppingBag, Search } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
+import SearchModal from './SearchModal';
 
 /**
  * Taxonomy definition
@@ -28,6 +29,7 @@ type ViewState = 'MAIN' | 'WOMAN' | 'MAN';
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [view, setView] = useState<ViewState>('MAIN');
     const { toggleCart, cartCount } = useCart();
 
@@ -50,6 +52,7 @@ export default function Sidebar() {
                     </button>
                     {/* ... Search button ... */}
                     <button
+                        onClick={() => setIsSearchOpen(true)}
                         className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                         aria-label="Search"
                     >
@@ -58,7 +61,7 @@ export default function Sidebar() {
                 </div>
 
                 <Link href="/" className="absolute left-1/2 -translate-x-1/2 text-xl font-serif tracking-widest uppercase hover:text-[#a48354] transition-colors">
-                    AtelierDouce
+                    Atelier Douce
                 </Link>
 
                 <div className="flex items-center gap-4">
@@ -77,6 +80,9 @@ export default function Sidebar() {
                 </div>
             </header>
 
+            {/* Search Modal */}
+            <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+
             {/* Sidebar Overlay */}
             {isOpen && (
                 <div
@@ -84,6 +90,7 @@ export default function Sidebar() {
                     onClick={reset}
                 />
             )}
+
 
             {/* Sidebar Menu */}
             <div className={`fixed top-0 left-0 bottom-0 w-[300px] bg-white z-50 transform transition-transform duration-300 ease-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'

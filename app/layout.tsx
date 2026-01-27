@@ -20,7 +20,7 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'AtelierDouce | Premium Comfort',
+  title: 'Atelier Douce | Premium Comfort',
   description: 'Premium slippers and home footwear.',
 
 };

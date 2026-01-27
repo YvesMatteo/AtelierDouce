@@ -12,7 +12,7 @@ export default function TermsOfService() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-serif mb-4 text-[#171717]">1. Introduction</h2>
                     <p className="text-gray-600 mb-4">
-                        Welcome to <strong>AtelierDouce</strong>. By accessing or using our website, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions, then you may not access the website or use any services.
+                        Welcome to <strong>Atelier Douce</strong>. By accessing or using our website, you agree to be bound by these Terms of Service. If you do not agree to all the terms and conditions, then you may not access the website or use any services.
                     </p>
                 </section>
 
@@ -60,7 +60,7 @@ export default function TermsOfService() {
                         Questions about the Terms of Service should be sent to us at <a href="mailto:support@atelierdouce.shop" className="text-[#a48354] hover:underline">support@atelierdouce.shop</a>.
                     </p>
                     <address className="not-italic text-gray-600">
-                        AtelierDouce<br />
+                        Atelier Douce<br />
                         Weidstrasse 8<br />
                         Switzerland
                     </address>

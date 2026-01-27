@@ -8,6 +8,7 @@ import 'dotenv/config';
 import { getCJClient, CJVariant } from '../lib/cjdropshipping';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
+import { cleanProductDescription } from './utils';
 
 const PRODUCTS_TO_ADD = [
     {
@@ -146,9 +147,12 @@ async function addProducts() {
             } else {
                 console.log('   💳 Creating Stripe product...');
                 try {
+                    const cleanDesc = cleanProductDescription(details.description);
+                    const productDesc = cleanDesc.length > 20 ? cleanDesc : `Premium ${item.name}. Quality materials and stylish design.`;
+
                     const sProd = await stripe.products.create({
                         name: item.name,
-                        description: details.description?.substring(0, 500) || item.name,
+                        description: productDesc,
                         images: [details.productImage].filter(img => isValidUrl(img)),
                         metadata: { cj_product_id: item.id }
                     });
@@ -175,7 +179,7 @@ async function addProducts() {
                 .upsert({
                     cj_product_id: item.id,
                     name: item.name,
-                    description: details.description || item.name,
+                    description: cleanProductDescription(details.description) || item.name,
                     price: retailPrice,
                     images: [details.productImage, ...(details.productImageSet || [])].filter(img => isValidUrl(img)).slice(0, 5),
                     cj_sku: details.productSku,

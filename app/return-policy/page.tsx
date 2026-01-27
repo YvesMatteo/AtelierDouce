@@ -12,7 +12,7 @@ export default function ReturnPolicy() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-serif mb-4 text-[#171717]">1. Overview</h2>
                     <p className="text-gray-600 mb-4">
-                        At <strong>AtelierDouce</strong>, we strive to ensure you are satisfied with your purchase. However, due to the nature of our business and logistics, we maintain a strict return policy. Please read the following carefully before making a purchase.
+                        At <strong>Atelier Douce</strong>, we strive to ensure you are satisfied with your purchase. However, due to the nature of our business and logistics, we maintain a strict return policy. Please read the following carefully before making a purchase.
                     </p>
                 </section>
 
@@ -60,7 +60,7 @@ export default function ReturnPolicy() {
                         For any questions regarding our return policy, please contact us at:
                     </p>
                     <address className="not-italic text-gray-600">
-                        <strong>AtelierDouce</strong><br />
+                        <strong>Atelier Douce</strong><br />
                         Weidstrasse 8<br />
                         Switzerland<br />
                         Email: <a href="mailto:support@atelierdouce.shop" className="text-[#a48354] hover:underline">support@atelierdouce.shop</a>

@@ -9,10 +9,10 @@ import ProductCarousel from '@/components/ProductCarousel';
 // ... imports
 
 interface HomeProps {
-  searchParams: Promise<{ category?: string; gender?: string }>;
+  searchParams: Promise<{ category?: string; gender?: string; search?: string }>;
 }
 
-async function getProducts(gender?: string, category?: string): Promise<Product[]> {
+async function getProducts(gender?: string, category?: string, search?: string): Promise<Product[]> {
   let query = supabase
     .from('products')
     .select('*')
@@ -27,6 +27,10 @@ async function getProducts(gender?: string, category?: string): Promise<Product[
     query = query.eq('category', category);
   }
 
+  if (search) {
+    query = query.ilike('name', `%${search}%`);
+  }
+
   const { data, error } = await query;
 
   if (error) {
@@ -39,9 +43,9 @@ async function getProducts(gender?: string, category?: string): Promise<Product[
 
 export default async function Home(props: HomeProps) {
   const searchParams = await props.searchParams;
-  const { category, gender } = searchParams;
+  const { category, gender, search } = searchParams;
 
-  const products = await getProducts(gender, category);
+  const products = await getProducts(gender, category, search);
   const headersList = await headers();
   const country = headersList.get('x-vercel-ip-country') || 'US';
   const { code, rate } = getCurrencyForCountry(country);
@@ -50,12 +54,16 @@ export default async function Home(props: HomeProps) {
   let title = 'Winter Essentials';
   let subtitle = 'Premium Home Comfort';
 
-  if (gender) {
+  if (search) {
+    title = `Results for "${search}"`;
+    subtitle = `${products.length} product${products.length !== 1 ? 's' : ''} found`;
+  } else if (gender) {
     subtitle = `${gender}'s Collection`;
     title = category ? category : 'New Arrivals';
   } else if (category) {
     title = category === 'All' ? 'All Products' : category;
   }
+
 
 
   return (
@@ -138,7 +146,7 @@ export default async function Home(props: HomeProps) {
       <footer className="bg-[#211e1e] text-[#897a64] py-16 px-6 md:px-12 text-sm font-sans">
         <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="space-y-6">
-            <h3 className="font-serif text-[#dfe3e8] text-lg uppercase tracking-widest">AtelierDouce</h3>
+            <h3 className="font-serif text-[#dfe3e8] text-lg uppercase tracking-widest">Atelier Douce</h3>
             <p className="leading-relaxed text-xs">
               Premium home essentials focused on quality, minimalism, and timeless style.
             </p>
@@ -174,7 +182,7 @@ export default async function Home(props: HomeProps) {
         </div>
 
         <div className="max-w-[1400px] mx-auto mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-          <p>© {new Date().getFullYear()} AtelierDouce. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Atelier Douce. All rights reserved.</p>
         </div>
       </footer>
     </main>

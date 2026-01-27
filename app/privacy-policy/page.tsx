@@ -12,7 +12,7 @@ export default function PrivacyPolicy() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-serif mb-4 text-[#171717]">1. Introduction</h2>
                     <p className="text-gray-600 mb-4">
-                        AtelierDouce ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how your personal information is collected, used, and disclosed by AtelierDouce.
+                        Atelier Douce ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how your personal information is collected, used, and disclosed by Atelier Douce.
                     </p>
                     <p className="text-gray-600 mb-4">
                         This policy applies to our website <strong>https://atelierdouce.shop</strong> and its associated subdomains (collectively, our "Service"). By accessing or using our Service, you signify that you have read, understood, and agree to our collection, storage, use, and disclosure of your personal information as described in this Privacy Policy and our Terms of Service.
@@ -73,7 +73,7 @@ export default function PrivacyPolicy() {
                         For more information about our privacy practices, if you have questions, or if you would like to make a complaint, please contact us by e-mail at <a href="mailto:support@atelierdouce.shop" className="text-[#a48354] hover:underline">support@atelierdouce.shop</a> or by mail using the details provided below:
                     </p>
                     <address className="not-italic text-gray-600">
-                        AtelierDouce<br />
+                        Atelier Douce<br />
                         Weidstrasse 8<br />
                         Switzerland
                     </address>

@@ -11,6 +11,9 @@ async function debug() {
         console.log('Product Name Type:', typeof details.productName);
         console.log('Product Name Value:', JSON.stringify(details.productName));
         console.log('Name En:', details.nameEn);
+        if (details.variants && details.variants.length > 0) {
+            console.log('First Variant:', JSON.stringify(details.variants[0], null, 2));
+        }
     }
 }
 

@@ -40,7 +40,7 @@ export default function ShippingPolicy() {
                 <section className="mb-8">
                     <h2 className="text-2xl font-serif mb-4 text-[#171717]">4. Right to Refuse Shipping</h2>
                     <p className="text-gray-600 mb-4">
-                        AtelierDouce reserves the right to deny shipping to any specific location or customer at our sole discretion. In such cases, a full refund will be issued promptly.
+                        Atelier Douce reserves the right to deny shipping to any specific location or customer at our sole discretion. In such cases, a full refund will be issued promptly.
                     </p>
                 </section>
 

@@ -56,23 +56,65 @@ export async function POST(request: Request) {
             console.log('📦 Order saved:', order.id);
 
             // Save order items
+            // Parse cart items from metadata to get selected options per product
+            let cartItems: any[] = [];
+            try {
+                cartItems = JSON.parse(session.metadata?.cart_items || '[]');
+            } catch (e) {
+                console.warn('Could not parse cart_items metadata');
+            }
+
             for (const item of lineItems.data) {
                 const product = item.price?.product as Stripe.Product;
+
+                // Handle free gift items
+                if (product.metadata?.is_gift === 'true') {
+                    // Gift item - use hardcoded CJ ID for the gift product
+                    await supabase.from('order_items').insert({
+                        order_id: order.id,
+                        product_id: null, // Gift might not be in our DB
+                        quantity: 1,
+                        price: 0,
+                        options: { is_gift: true },
+                        cj_variant_id: '2402050548251627600', // Cloud bag CJ variant ID
+                    });
+                    continue;
+                }
 
                 // Find product in our database by Stripe product ID
                 const { data: dbProduct } = await supabase
                     .from('products')
-                    .select('id, cj_product_id')
+                    .select('id, cj_product_id, variants')
                     .eq('stripe_product_id', product.id)
                     .single();
+
+                // Find the matching cart item to get selected options
+                const cartItem = cartItems.find((ci: any) => ci.cj_product_id === dbProduct?.cj_product_id);
+                const selectedOptions = cartItem?.selected_options || {};
+
+                // Look up the correct variant ID from the variants array
+                let cjVariantId = dbProduct?.cj_product_id; // Fallback to product ID
+                if (dbProduct?.variants && Array.isArray(dbProduct.variants)) {
+                    const matchingVariant = dbProduct.variants.find((v: any) => {
+                        if (!v.options || Object.keys(selectedOptions).length === 0) return false;
+                        // Check if all selected options match
+                        return Object.entries(selectedOptions).every(
+                            ([key, value]) => v.options[key] === value
+                        );
+                    });
+                    if (matchingVariant) {
+                        cjVariantId = matchingVariant.id;
+                        console.log(`   🎯 Matched variant: ${cjVariantId} for options:`, selectedOptions);
+                    }
+                }
 
                 await supabase.from('order_items').insert({
                     order_id: order.id,
                     product_id: dbProduct?.id,
                     quantity: item.quantity || 1,
                     price: (item.amount_total || 0) / 100,
-                    options: session.metadata,
-                    cj_variant_id: dbProduct?.cj_product_id,
+                    options: selectedOptions,
+                    cj_variant_id: cjVariantId,
                 });
             }
 

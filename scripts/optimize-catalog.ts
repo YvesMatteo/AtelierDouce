@@ -1,3 +1,4 @@
+import { cleanProductName } from './utils';
 
 import 'dotenv/config';
 import { getCJClient } from '../lib/cjdropshipping';
@@ -75,7 +76,7 @@ async function main() {
                 englishName = details.productNameEn || String(details.productName).replace(/[^\x00-\x7F]/g, "") || "New Product";
             }
 
-            englishName = formatProductName(englishName);
+            englishName = cleanProductName(englishName);
 
             // 4. Variant/Image Sync Logic
             // Goal: Only keep variants that have a distinct image.
@@ -206,17 +207,6 @@ async function main() {
         console.log('   ⏳ Waiting 1s...');
         await new Promise(resolve => setTimeout(resolve, 1000));
     }
-}
-
-function formatProductName(name: string): string {
-    return name
-        .replace(/[^\x00-\x7F]/g, "") // Remove non-ASCII (often Chinese chars)
-        .replace(/\s+/g, ' ')
-        .trim()
-        .split(' ')
-        .slice(0, 8)
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
 }
 
 main().catch(console.error);

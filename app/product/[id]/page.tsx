@@ -132,8 +132,25 @@ export default async function ProductPage({ params }: PageProps) {
                         {/* Accordions / Extra Info */}
                         <div className="mt-12 border-t border-gray-100">
                             {[
-                                { title: 'Shipping & Returns', content: 'Free worldwide shipping. 30-day return policy.' },
-                                { title: 'Materials & Care', content: 'Premium cotton blend. Hand wash only.' },
+                                {
+                                    title: 'Shipping & Returns',
+                                    content: (
+                                        <div className="space-y-2">
+                                            <p>
+                                                We offer worldwide shipping. <Link href="/shipping-policy" className="underline hover:text-[#171717]">View Shipping Policy</Link>
+                                            </p>
+                                            <p>
+                                                <Link href="/return-policy" className="underline hover:text-[#171717]">View Return Policy</Link>
+                                            </p>
+                                        </div>
+                                    )
+                                },
+                                {
+                                    title: 'Materials & Care',
+                                    content: (
+                                        <p>Premium cotton blend. Hand wash only.</p>
+                                    )
+                                },
                             ].map((item, i) => (
                                 <div key={i} className="border-b border-gray-100 py-4 group cursor-pointer">
                                     <div className="flex justify-between items-center">

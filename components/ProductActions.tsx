@@ -64,11 +64,7 @@ export default function ProductActions({ product, currentPrice, currencyCode }: 
                         <label className="text-[13px] font-bold uppercase tracking-wider text-[#171717]">
                             {option.name}
                         </label>
-                        {option.name.toLowerCase() === 'size' && (
-                            <button className="text-[11px] underline text-[#5e5e5e] hover:text-[#171717]">
-                                Size Guide
-                            </button>
-                        )}
+
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {option.values.map((val) => (
@@ -76,8 +72,8 @@ export default function ProductActions({ product, currentPrice, currencyCode }: 
                                 key={val}
                                 onClick={() => handleOptionSelect(option.name, val)}
                                 className={`h-10 px-6 border text-sm transition-all duration-200 min-w-[3rem] ${selectedOptions[option.name] === val
-                                        ? 'border-[#171717] bg-[#171717] text-white'
-                                        : 'border-[#e5e5e5] hover:border-[#171717] hover:bg-[#171717] hover:text-white'
+                                    ? 'border-[#171717] bg-[#171717] text-white'
+                                    : 'border-[#e5e5e5] hover:border-[#171717] hover:bg-[#171717] hover:text-white'
                                     }`}
                             >
                                 {val}
