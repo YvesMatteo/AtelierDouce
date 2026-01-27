@@ -33,17 +33,6 @@ const PRODUCTS_TO_ADD = [
     { id: '1672132490384904192', name: 'Simple Pocket Coin Purse', category: 'Bags', gender: 'Woman' },
     { id: '1405411242029486080', name: 'Casual Shoulder Tote Bag', category: 'Bags', gender: 'Woman' },
     { id: '1544965318324531200', name: 'Lapel Single Breasted Knit Cardigan', category: 'Clothing', gender: 'Woman' },
-    // Re-adding previous manually added products to ensure they get updated too if possible, or just user needs to know.
-    // Ideally we'd fetch all active products and update them, but for now let's focus on these 14 + the 4 manual ones if we have their IDs.
-    // Manual/Previous ones:
-    // Slippers: 1404090264161869824
-    { id: '1404090264161869824', name: 'Cozy Anti-Slip Cotton Slippers', category: 'Shoes', gender: 'Woman' },
-    // Boots: 1300676451631505408
-    { id: '1300676451631505408', name: 'Winter Snow Boots with Bowknot', category: 'Shoes', gender: 'Woman' },
-    // Coat: 1305051936306122752
-    { id: '1305051936306122752', name: "Women's Autumn and Winter Casual Coat", category: 'Clothing', gender: 'Woman' },
-    // Scarf: 1319891040336269312
-    { id: '1319891040336269312', name: 'Solid Color Winter Tassel Scarf', category: 'Accessories', gender: 'Woman' },
 ];
 
 async function addProducts() {

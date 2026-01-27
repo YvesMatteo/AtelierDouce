@@ -17,15 +17,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 const PRODUCTS_TO_DELETE_NAMES = [
-    'Women Winter Boots Mid-calf Snow Boots',
-    'Fashion Ankle Boots With Side Zipper',
-    'Fashion Boots With Buckle Chunky Heel',
-    'Snow Boots Winter Warm Hook And',
-    'Fashion Lace-up Chunky Heels Boots Winter',
-    'Cosy Warm Fluffy Slippers - Khaki',
-    'Cosy Warm Fluffy Slippers - White',
-    'Cosy Warm Fluffy Slippers - Gray',
-    'Cosy Warm Fluffy Slippers - Pink'
+    'Cozy Anti-Slip Cotton Slippers',
+    'Winter Snow Boots with Bowknot',
+    "Women's Autumn and Winter Casual Coat",
+    'Solid Color Winter Tassel Scarf'
 ];
 
 async function deleteProducts() {
@@ -47,28 +42,16 @@ async function deleteProducts() {
     for (const product of products) {
         console.log(`\nProcessing: ${product.name} (${product.id})`);
 
-        // 2. Archive/Delete in Stripe
-        if (product.stripe_product_id) {
-            try {
-                // Try to delete, if fails (due to transactions), archive it.
-                // However, usually archiving is safer and sufficient.
-                await stripe.products.update(product.stripe_product_id, { active: false });
-                console.log(`   ✅ Archived in Stripe: ${product.stripe_product_id}`);
-            } catch (err: any) {
-                console.error(`   ❌ Stripe Error: ${err.message}`);
-            }
-        }
-
-        // 3. Delete from Supabase
+        // 3. Soft Delete (Hide) in Supabase
         const { error: delError } = await supabase
             .from('products')
-            .delete()
+            .update({ is_active: false })
             .eq('id', product.id);
 
         if (delError) {
-            console.error(`   ❌ Supabase Delete Error: ${delError.message}`);
+            console.error(`   ❌ Supabase Update Error: ${delError.message}`);
         } else {
-            console.log('   ✅ Deleted from Supabase');
+            console.log('   ✅ Deactivated in Supabase (Soft Delete)');
         }
     }
 

@@ -10,7 +10,7 @@ const supabase = createClient(
 async function listProducts() {
     const { data: products, error } = await supabase
         .from('products')
-        .select('id, name, stripe_product_id');
+        .select('id, name, stripe_product_id, is_active');
 
     if (error) {
         console.error('Error fetching products:', error);
@@ -19,7 +19,8 @@ async function listProducts() {
 
     console.log('Found products:', products.length);
     products.forEach(p => {
-        console.log(`- [${p.id}] ${p.name} (Stripe: ${p.stripe_product_id})`);
+        const status = p.is_active ? '✅ Active' : '❌ Inactive';
+        console.log(`- [${p.id}] ${p.name} (${status})`);
     });
 }
 

@@ -54,7 +54,7 @@ export default async function Home(props: HomeProps) {
     subtitle = `${gender}'s Collection`;
     title = category ? category : 'New Arrivals';
   } else if (category) {
-    title = category;
+    title = category === 'All' ? 'All Products' : category;
   }
 
 
@@ -102,6 +102,15 @@ export default async function Home(props: HomeProps) {
           </div>
 
           <ProductCarousel products={products} rate={rate} code={code} />
+
+          <div className="flex justify-center mt-12">
+            <Link
+              href="/?category=All"
+              className="px-10 py-4 bg-[#171717] text-white text-[13px] font-bold tracking-[0.15em] uppercase hover:bg-[#a48354] transition-colors duration-300"
+            >
+              Shop All
+            </Link>
+          </div>
         </div>
       </section>
 

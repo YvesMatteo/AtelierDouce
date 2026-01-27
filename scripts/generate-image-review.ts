@@ -20,10 +20,6 @@ const PRODUCTS_TO_ADD = [
     { id: '1672132490384904192', name: 'Simple Pocket Coin Purse' },
     { id: '1405411242029486080', name: 'Casual Shoulder Tote Bag' },
     { id: '1544965318324531200', name: 'Lapel Single Breasted Knit Cardigan' },
-    { id: '1404090264161869824', name: 'Cozy Anti-Slip Cotton Slippers' },
-    { id: '1300676451631505408', name: 'Winter Snow Boots with Bowknot' },
-    { id: '1305051936306122752', name: "Women's Autumn and Winter Casual Coat" },
-    { id: '1319891040336269312', name: 'Solid Color Winter Tassel Scarf' },
 ];
 
 async function generateReview() {
