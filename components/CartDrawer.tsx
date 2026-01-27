@@ -17,6 +17,8 @@ export default function CartDrawer() {
         removeFromCart,
         updateQuantity,
         cartTotal,
+        subtotal,
+        discount,
         cartCount,
     } = useCart();
     const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -106,6 +108,11 @@ export default function CartDrawer() {
                                         className="object-cover"
                                         sizes="80px"
                                     />
+                                    {item.isGift && (
+                                        <div className="absolute top-0 right-0 bg-[#D4AF37] text-white text-[10px] uppercase font-bold px-2 py-0.5">
+                                            Gift
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex-1 flex flex-col justify-between">
                                     <div>
@@ -129,28 +136,36 @@ export default function CartDrawer() {
                                     </div>
 
                                     <div className="flex items-center justify-between mt-4">
-                                        <div className="flex items-center border border-gray-200">
-                                            <button
-                                                onClick={() => updateQuantity(item.productId, item.quantity - 1, item.selectedOptions)}
-                                                className="p-1 hover:bg-gray-100 transition-colors"
-                                                disabled={item.quantity <= 1}
-                                            >
-                                                <Minus className="w-3 h-3" />
-                                            </button>
-                                            <span className="text-sm w-8 text-center">{item.quantity}</span>
-                                            <button
-                                                onClick={() => updateQuantity(item.productId, item.quantity + 1, item.selectedOptions)}
-                                                className="p-1 hover:bg-gray-100 transition-colors"
-                                            >
-                                                <Plus className="w-3 h-3" />
-                                            </button>
-                                        </div>
-                                        <button
-                                            onClick={() => removeFromCart(item.productId, item.selectedOptions)}
-                                            className="text-xs text-gray-400 hover:text-red-500 underline transition-colors"
-                                        >
-                                            Remove
-                                        </button>
+                                        {!item.isGift ? (
+                                            <>
+                                                <div className="flex items-center border border-gray-200">
+                                                    <button
+                                                        onClick={() => updateQuantity(item.productId, item.quantity - 1, item.selectedOptions)}
+                                                        className="p-1 hover:bg-gray-100 transition-colors"
+                                                        disabled={item.quantity <= 1}
+                                                    >
+                                                        <Minus className="w-3 h-3" />
+                                                    </button>
+                                                    <span className="text-sm w-8 text-center">{item.quantity}</span>
+                                                    <button
+                                                        onClick={() => updateQuantity(item.productId, item.quantity + 1, item.selectedOptions)}
+                                                        className="p-1 hover:bg-gray-100 transition-colors"
+                                                    >
+                                                        <Plus className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                                <button
+                                                    onClick={() => removeFromCart(item.productId, item.selectedOptions)}
+                                                    className="text-xs text-gray-400 hover:text-red-500 underline transition-colors"
+                                                >
+                                                    Remove
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
+                                                Free Gift Included
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -161,9 +176,21 @@ export default function CartDrawer() {
                 {/* Footer */}
                 {cartItems.length > 0 && (
                     <div className="p-6 border-t border-gray-100 bg-gray-50/50">
-                        <div className="flex justify-between items-center mb-4">
-                            <span className="text-sm uppercase tracking-wider text-gray-600">Subtotal</span>
-                            <span className="text-lg font-medium">{currencySymbol}{cartTotal.toFixed(0)}</span>
+                        <div className="space-y-2 mb-4">
+                            <div className="flex justify-between items-center text-sm text-gray-500">
+                                <span>Subtotal</span>
+                                <span>{currencySymbol}{subtotal ? subtotal.toFixed(0) : '0'}</span>
+                            </div>
+                            {discount > 0 && (
+                                <div className="flex justify-between items-center text-sm text-[#D4AF37]">
+                                    <span>Discount</span>
+                                    <span>-{currencySymbol}{discount.toFixed(0)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between items-center text-lg font-medium pt-2 border-t border-gray-100">
+                                <span>Total</span>
+                                <span>{currencySymbol}{cartTotal.toFixed(0)}</span>
+                            </div>
                         </div>
                         <p className="text-xs text-gray-500 mb-6 text-center">
                             Shipping and taxes calculated at checkout.

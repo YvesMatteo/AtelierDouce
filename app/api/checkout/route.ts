@@ -1,7 +1,9 @@
+
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { supabase } from '@/lib/supabase';
 import { getCurrencyForCountry, calculatePrice, BASE_PRICE_USD } from '@/lib/currency';
+import { calculateDiscount } from '@/lib/discount';
 
 export async function POST(request: Request) {
     try {
@@ -22,6 +24,29 @@ export async function POST(request: Request) {
 
         for (const item of items) {
             const { productId, quantity = 1, selectedOptions } = item;
+
+            // Handle Free Gift
+            if (productId === 'GIFT-CLOUD-BAG') {
+                lineItems.push({
+                    price_data: {
+                        currency: currencyCode.toLowerCase(),
+                        product_data: {
+                            name: 'Free Gift: Niche Plaid Cloud Bag',
+                            images: ['https://cf.cjdropshipping.com/quick/product/d4273748-7689-4640-ad06-9119fef2c10a.jpg'],
+                            metadata: { is_gift: 'true' },
+                        },
+                        unit_amount: 0,
+                    },
+                    quantity: 1, // Force quantity 1 for gift
+                });
+
+                metadataItems.push({
+                    product_id: 'GIFT-CLOUD-BAG',
+                    quantity: 1,
+                    is_gift: true
+                });
+                continue;
+            }
 
             // Get product from Supabase to verify existence and get details
             const { data: product, error: productError } = await supabase
@@ -78,24 +103,28 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'No valid items to checkout' }, { status: 400 });
         }
 
-        // Calculate discounts
-        const totalQuantity = items.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
-        const coupons = [];
+        // --- Calculate Discounts (Using Shared Logic) ---
+        const isZeroDecimal = currencyCode === 'JPY';
+        const singleItemPrice = calculatePrice(BASE_PRICE_USD, rate);
+        const singleItemUnitAmount = isZeroDecimal ? singleItemPrice : singleItemPrice * 100;
 
-        if (totalQuantity >= 4) {
-            // "Buy 4 Get 1 Free" equivalent (25% off logic deals better with mixed price carts)
+        // Prepare items for calculation
+        const calcItems = items
+            .filter((item: any) => item.productId !== 'GIFT-CLOUD-BAG')
+            .map((item: any) => ({
+                price: singleItemUnitAmount,
+                quantity: item.quantity || 1
+            }));
+
+        const discountAmount = calculateDiscount(calcItems);
+
+        const coupons = [];
+        if (discountAmount > 0) {
             const coupon = await stripe.coupons.create({
-                percent_off: 25,
+                amount_off: discountAmount,
+                currency: currencyCode.toLowerCase(),
                 duration: 'once',
-                name: 'Buy 4 Get 1 Free (25% Off)',
-            });
-            coupons.push({ coupon: coupon.id });
-        } else if (totalQuantity >= 2) {
-            // Buy 2 Get 20% Off
-            const coupon = await stripe.coupons.create({
-                percent_off: 20,
-                duration: 'once',
-                name: 'Buy 2 Get 20% Off',
+                name: 'Discount (Applied at Checkout)',
             });
             coupons.push({ coupon: coupon.id });
         }
@@ -116,8 +145,9 @@ export async function POST(request: Request) {
         });
 
         return NextResponse.json({ sessionId: session.id, url: session.url });
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error('Checkout error:', err);
-        return NextResponse.json({ error: err.message }, { status: 500 });
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        return NextResponse.json({ error: errorMessage }, { status: 500 });
     }
 }
