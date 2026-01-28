@@ -11,6 +11,14 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 export default function CartDrawer() {
     const {
+        isCartOpen,
+        toggleCart,
+        cartItems,
+        removeFromCart,
+        updateQuantity,
+        cartTotal,
+        subtotal,
+        discount,
         cartCount,
         itemDiscounts,
         addToCart,
@@ -248,38 +256,39 @@ export default function CartDrawer() {
                             );
                         })
                     )}
-
-                    {cartItems.length > 0 && (
-                        <div className="p-6 border-t border-gray-100 bg-gray-50/50">
-                            <div className="space-y-2 mb-4">
-                                <div className="flex justify-between items-center text-sm text-gray-500">
-                                    <span>Subtotal</span>
-                                    <span>{currencySymbol}{subtotal ? subtotal.toFixed(0) : '0'}</span>
-                                </div>
-                                {discount > 0 && (
-                                    <div className="flex justify-between items-center text-sm text-[#D4AF37]">
-                                        <span>Discount</span>
-                                        <span>-{currencySymbol}{discount.toFixed(0)}</span>
-                                    </div>
-                                )}
-                                <div className="flex justify-between items-center text-lg font-medium pt-2 border-t border-gray-100">
-                                    <span>Total</span>
-                                    <span>{currencySymbol}{cartTotal.toFixed(0)}</span>
-                                </div>
-                            </div>
-                            <p className="text-xs text-gray-500 mb-6 text-center">
-                                Shipping and taxes calculated at checkout.
-                            </p>
-                            <button
-                                onClick={handleCheckout}
-                                disabled={isCheckingOut}
-                                className="w-full bg-[#232323] text-white py-4 px-8 text-[13px] font-bold uppercase tracking-[0.15em] hover:bg-[#a48354] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                            >
-                                {isCheckingOut ? 'Processing...' : 'Checkout'}
-                            </button>
-                        </div>
-                    )}
                 </div>
-            </>
-            );
+
+                {cartItems.length > 0 && (
+                    <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+                        <div className="space-y-2 mb-4">
+                            <div className="flex justify-between items-center text-sm text-gray-500">
+                                <span>Subtotal</span>
+                                <span>{currencySymbol}{subtotal ? subtotal.toFixed(0) : '0'}</span>
+                            </div>
+                            {discount > 0 && (
+                                <div className="flex justify-between items-center text-sm text-[#D4AF37]">
+                                    <span>Discount</span>
+                                    <span>-{currencySymbol}{discount.toFixed(0)}</span>
+                                </div>
+                            )}
+                            <div className="flex justify-between items-center text-lg font-medium pt-2 border-t border-gray-100">
+                                <span>Total</span>
+                                <span>{currencySymbol}{cartTotal.toFixed(0)}</span>
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-500 mb-6 text-center">
+                            Shipping and taxes calculated at checkout.
+                        </p>
+                        <button
+                            onClick={handleCheckout}
+                            disabled={isCheckingOut}
+                            className="w-full bg-[#232323] text-white py-4 px-8 text-[13px] font-bold uppercase tracking-[0.15em] hover:bg-[#a48354] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                        >
+                            {isCheckingOut ? 'Processing...' : 'Checkout'}
+                        </button>
+                    </div>
+                )}
+            </div>
+        </>
+    );
 }
