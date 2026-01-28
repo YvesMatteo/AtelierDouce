@@ -4,25 +4,43 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY! // Use service role for full access
 );
 
 async function main() {
-    const { data: products } = await supabase
+    console.log('Searching for products...');
+    const { data: products, error } = await supabase
         .from('products')
-        .select('id, cj_product_id, name, images')
-        .or('name.ilike.*hat*,name.ilike.*puffer*,name.ilike.*coat*,name.ilike.*jacket*');
+        .select('*')
+        .in('name', ['Elegant Collection Piece', 'Stylish Outerwear', 'Hood Warm Jacket Brown']);
 
-    if (!products) {
-        console.log('No products found');
+    if (error) {
+        console.error('Error fetching products:', error);
         return;
     }
 
+    if (!products || products.length === 0) {
+        console.log('No products found with those names.');
+        return;
+    }
+
+    console.log(`Found ${products.length} products.`);
+
     products.forEach(p => {
-        console.log(`\nID: ${p.id}`);
-        console.log(`CJ ID: ${p.cj_product_id}`);
+        console.log(`--------------------------------------------------`);
+        console.log(`ID: ${p.id}`);
         console.log(`Name: ${p.name}`);
-        console.log(`Images[0]: ${p.images?.[0]}`);
+        console.log(`CJ ID: ${p.cj_product_id}`);
+        console.log(`Created At: ${p.created_at}`);
+        console.log(`Images Count: ${p.images ? p.images.length : 0}`);
+        if (p.images && p.images.length > 0) {
+            console.log('Images:');
+            p.images.forEach((img: string, index: number) => {
+                console.log(`  [${index}] ${img}`);
+            });
+        } else {
+            console.log('Images: NONE');
+        }
     });
 }
 
