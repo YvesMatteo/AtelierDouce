@@ -1,4 +1,4 @@
-export const BASE_PRICE_USD = 49;
+export const BASE_PRICE_USD = 5;
 
 // Approximate exchange rates relative to USD (1 USD = X Currency)
 // These should ideally be fetched from an API in a real production environment
