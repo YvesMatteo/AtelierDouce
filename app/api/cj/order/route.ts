@@ -1,18 +1,17 @@
 import { NextResponse } from 'next/server';
 import { getCJClient, CJOrderRequest } from '@/lib/cjdropshipping';
-import { processOrderToCJ } from '@/lib/automation';
+import { processOrderAutomation } from '@/lib/automation';
 import { supabase } from '@/lib/supabase';
 
 export async function POST(request: Request) {
     try {
-        const body = await request.json();
-        const { orderId } = body;
+        const { orderId } = await request.json();
 
         if (!orderId) {
-            return NextResponse.json({ error: 'Order ID is required' }, { status: 400 });
+            return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
         }
 
-        const result = await processOrderToCJ(orderId);
+        const result = await processOrderAutomation(orderId);
 
         if (!result.success) {
             return NextResponse.json({ error: result.error }, { status: 500 });
@@ -20,7 +19,7 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             success: true,
-            cjOrderId: result.cjOrderId,
+            results: result.results
         });
 
     } catch (error: any) {

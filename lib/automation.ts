@@ -2,8 +2,8 @@
 import { supabase } from '@/lib/supabase';
 import { getCJClient, CJOrderRequest } from '@/lib/cjdropshipping';
 
-export async function processOrderToCJ(orderId: string): Promise<{ success: boolean; cjOrderId?: string; error?: string }> {
-    console.log(`🤖 Starting CJ automation for order: ${orderId}`);
+export async function processOrderAutomation(orderId: string): Promise<{ success: boolean; results?: Record<string, string>; error?: string }> {
+    console.log(`🤖 Starting Order Automation for order: ${orderId}`);
 
     try {
         // 1. Get order from Supabase
@@ -23,79 +23,127 @@ export async function processOrderToCJ(orderId: string): Promise<{ success: bool
             throw new Error(`Order not found: ${orderError?.message}`);
         }
 
-        if (order.cj_order_id) {
-            console.log('   ⚠️ Order already processed in CJ:', order.cj_order_id);
-            return { success: true, cjOrderId: order.cj_order_id };
-        }
+        // 2. Group items by supplier
+        const itemsBySupplier: Record<string, any[]> = {};
 
-        // 2. Prepare CJ order request
-        const shippingAddress = order.shipping_address as any;
+        for (const item of order.order_items) {
+            // Default to CJ if supplier is missing (legacy compatibility)
+            const supplier = item.supplier || item.products?.supplier || 'CJ';
 
-
-        // Map products
-        // Handle case where product might not have a direct mapping (shouldn't happen with our sync)
-        const products = order.order_items.map((item: any) => {
-            const vid = item.cj_variant_id || item.products?.cj_product_id;
-            if (!vid) {
-                console.warn(`   ⚠️ Missing CJ Variant ID for item: ${item.id}`);
+            if (!itemsBySupplier[supplier]) {
+                itemsBySupplier[supplier] = [];
             }
-            return {
-                vid: vid,
-                quantity: item.quantity,
-            };
-        }).filter((p: any) => p.vid); // Filter out invalid items
-
-        if (products.length === 0) {
-            throw new Error('No valid CJ products found in order');
+            itemsBySupplier[supplier].push(item);
         }
 
-        // CJ requires full country name (e.g. "United States") for shippingCountry
-        // but Stripe gives us ISO code (e.g. "US")
-        const countryCode = shippingAddress?.country || 'US';
-        let countryName = countryCode;
-        try {
-            const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
-            countryName = regionNames.of(countryCode) || countryCode;
-        } catch (e) {
-            console.warn(`Could not resolving country name for ${countryCode}`);
+        console.log('   📦 Items grouped by supplier:', Object.keys(itemsBySupplier));
+
+        const results: Record<string, string> = {};
+
+        // 3. Route to specific fulfillment handlers
+        if (itemsBySupplier['CJ'] && itemsBySupplier['CJ'].length > 0) {
+            if (order.cj_order_id) {
+                console.log('   ⚠️ CJ Order already processed:', order.cj_order_id);
+                results['CJ'] = order.cj_order_id;
+            } else {
+                console.log(`   ➡️ Routing ${itemsBySupplier['CJ'].length} items to CJ Dropshipping...`);
+                try {
+                    const cjId = await fulfillWithCJ(order, itemsBySupplier['CJ']);
+                    results['CJ'] = cjId;
+
+                    // Update main order with CJ ID (Legacy support)
+                    // Ideally we should have a `supplier_orders` table, but for now we keep cj_order_id on orders
+                    await supabase.from('orders').update({
+                        cj_order_id: cjId,
+                        status: 'processing',
+                        updated_at: new Date().toISOString()
+                    }).eq('id', orderId);
+
+                } catch (e: any) {
+                    console.error('   ❌ CJ Fulfillment Failed:', e.message);
+                    results['CJ_ERROR'] = e.message;
+                }
+            }
         }
 
-        const cjOrder: CJOrderRequest = {
-            orderNumber: order.id,
-            shippingZip: shippingAddress?.postal_code || '00000',
-            shippingCountry: countryName, // Full name resolved from code
-            shippingCountryCode: countryCode, // ISO Code
-            shippingProvince: shippingAddress?.state || '',
-            shippingCity: shippingAddress?.city || '',
-            shippingAddress: [shippingAddress?.line1, shippingAddress?.line2].filter(Boolean).join(', '),
-            shippingCustomerName: order.customer_name || 'Customer',
-            shippingPhone: shippingAddress?.phone || '0000000000',
-            products: products,
-            payType: 1, // 1 = Balance (requires funds), will otherwise go to "Awaiting Payment"
-            remark: `Stripe Ref: ${order.stripe_session_id}`,
-        };
+        if (itemsBySupplier['Qksource'] && itemsBySupplier['Qksource'].length > 0) {
+            console.log(`   ➡️ Routing ${itemsBySupplier['Qksource'].length} items to Qksource...`);
+            try {
+                const qkId = await fulfillWithQksource(order, itemsBySupplier['Qksource']);
+                results['Qksource'] = qkId;
+            } catch (e: any) {
+                console.error('   ❌ Qksource Fulfillment Failed:', e.message);
+                results['Qksource_ERROR'] = e.message;
+            }
+        }
 
-        // 3. Create order in CJDropshipping
-        const cj = getCJClient();
-        console.log('   📤 Sending to CJ Dropshipping...');
-        const cjResult = await cj.createOrder(cjOrder);
-
-        console.log('   ✅ CJ Order Created:', cjResult.orderId);
-
-        // 4. Update order with CJ order ID
-        await supabase
-            .from('orders')
-            .update({
-                cj_order_id: cjResult.orderId,
-                status: 'processing',
-                updated_at: new Date().toISOString(),
-            })
-            .eq('id', orderId);
-
-        return { success: true, cjOrderId: cjResult.orderId };
+        return { success: true, results };
 
     } catch (error: any) {
-        console.error('   ❌ Automation Sync Failed:', error.message);
+        console.error('   ❌ Automation Failed:', error.message);
         return { success: false, error: error.message };
     }
+}
+
+async function fulfillWithCJ(order: any, items: any[]): Promise<string> {
+    const shippingAddress = order.shipping_address as any;
+
+    // Map products
+    const products = items.map((item: any) => {
+        const vid = item.cj_variant_id || item.products?.cj_product_id;
+        if (!vid) {
+            console.warn(`       ⚠️ Missing CJ Variant ID for item: ${item.id}`);
+        }
+        return {
+            vid: vid,
+            quantity: item.quantity,
+        };
+    }).filter((p: any) => p.vid);
+
+    if (products.length === 0) {
+        throw new Error('No valid CJ products found');
+    }
+
+    // Resolve Country Name
+    const countryCode = shippingAddress?.country || 'US';
+    let countryName = countryCode;
+    try {
+        const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+        countryName = regionNames.of(countryCode) || countryCode;
+    } catch (e) {
+        console.warn(`Could not resolving country name for ${countryCode}`);
+    }
+
+    const cjOrder: CJOrderRequest = {
+        orderNumber: order.id,
+        shippingZip: shippingAddress?.postal_code || '00000',
+        shippingCountry: countryName,
+        shippingCountryCode: countryCode,
+        shippingProvince: shippingAddress?.state || '',
+        shippingCity: shippingAddress?.city || '',
+        shippingAddress: [shippingAddress?.line1, shippingAddress?.line2].filter(Boolean).join(', '),
+        shippingCustomerName: order.customer_name || 'Customer',
+        shippingPhone: shippingAddress?.phone || '0000000000',
+        products: products,
+        payType: 1,
+        remark: `Stripe Ref: ${order.stripe_session_id}`,
+    };
+
+    const cj = getCJClient();
+    const cjResult = await cj.createOrder(cjOrder);
+
+    console.log('       ✅ CJ Order Created:', cjResult.orderId);
+    return cjResult.orderId;
+}
+
+// Placeholder for future Qksource integration
+async function fulfillWithQksource(order: any, items: any[]): Promise<string> {
+    console.log('       🚧 Qksource API not yet integrated. Simulating success.');
+
+    // Future: 
+    // 1. Authenticate with Qksource API
+    // 2. Map items to Qksource SKUs
+    // 3. Create Order
+
+    return `QK-SIM-${Date.now()}`;
 }

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { supabase } from '@/lib/supabase';
-import { processOrderToCJ } from '@/lib/automation';
+import { processOrderAutomation } from '@/lib/automation';
 import Stripe from 'stripe';
 
 export async function POST(request: Request) {
@@ -93,6 +93,7 @@ export async function POST(request: Request) {
                             Color: selectedColor
                         },
                         cj_variant_id: giftCjVariantId,
+                        supplier: 'CJ', // Default gifts to CJ for now
                     });
                     continue;
                 }
@@ -100,7 +101,7 @@ export async function POST(request: Request) {
                 // Find product in our database by Stripe product ID
                 const { data: dbProduct } = await supabase
                     .from('products')
-                    .select('id, cj_product_id, variants')
+                    .select('id, cj_product_id, variants, supplier')
                     .eq('stripe_product_id', product.id)
                     .single();
 
@@ -131,13 +132,14 @@ export async function POST(request: Request) {
                     price: (item.amount_total || 0) / 100,
                     options: selectedOptions,
                     cj_variant_id: cjVariantId,
+                    supplier: dbProduct?.supplier || 'CJ',
                 });
             }
 
             console.log('📝 Order items saved');
 
-            // Trigger CJ order creation
-            await processOrderToCJ(order.id);
+            // Trigger order automation (CJ, Qksource, etc.)
+            await processOrderAutomation(order.id);
 
         } catch (error) {
             console.error('Error processing order:', error);
