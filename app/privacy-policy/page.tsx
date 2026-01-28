@@ -74,7 +74,6 @@ export default function PrivacyPolicy() {
                     </p>
                     <address className="not-italic text-gray-600">
                         Atelier Douce<br />
-                        Weidstrasse 8<br />
                         Switzerland
                     </address>
                 </section>

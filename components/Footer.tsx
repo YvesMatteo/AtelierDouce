@@ -29,7 +29,6 @@ export default function Footer() {
                     <div>
                         <h4 className="font-bold uppercase tracking-wider mb-4 text-sm">Contact</h4>
                         <ul className="space-y-2 text-sm text-gray-400">
-                            <li>Weidstrasse 8</li>
                             <li>Switzerland</li>
                             <li><a href="mailto:support@atelierdouce.shop" className="hover:text-[#a48354] transition-colors">support@atelierdouce.shop</a></li>
                         </ul>

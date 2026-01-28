@@ -61,7 +61,6 @@ export default function ReturnPolicy() {
                     </p>
                     <address className="not-italic text-gray-600">
                         <strong>Atelier Douce</strong><br />
-                        Weidstrasse 8<br />
                         Switzerland<br />
                         Email: <a href="mailto:support@atelierdouce.shop" className="text-[#a48354] hover:underline">support@atelierdouce.shop</a>
                     </address>
