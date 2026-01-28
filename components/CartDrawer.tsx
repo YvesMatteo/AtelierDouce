@@ -20,6 +20,7 @@ export default function CartDrawer() {
         subtotal,
         discount,
         cartCount,
+        itemDiscounts,
     } = useCart();
     const [isCheckingOut, setIsCheckingOut] = useState(false);
 
@@ -98,78 +99,109 @@ export default function CartDrawer() {
                             <p>Your cart is empty.</p>
                         </div>
                     ) : (
-                        cartItems.map((item, index) => (
-                            <div key={`${item.productId}-${index}`} className="flex gap-4">
-                                <div className="relative w-20 h-24 bg-gray-50 flex-shrink-0">
-                                    <Image
-                                        src={item.image}
-                                        alt={item.name}
-                                        fill
-                                        className="object-cover"
-                                        sizes="80px"
-                                    />
-                                    {item.isGift && (
-                                        <div className="absolute top-0 right-0 bg-[#D4AF37] text-white text-[10px] uppercase font-bold px-2 py-0.5">
-                                            Gift
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="flex-1 flex flex-col justify-between">
-                                    <div>
-                                        <div className="flex justify-between items-start">
-                                            <h3 className="text-sm font-medium text-gray-900 pr-4">
-                                                {item.name}
-                                            </h3>
-                                            <p className="text-sm font-medium text-gray-900">
-                                                {currencySymbol}{(item.price * item.quantity).toFixed(0)}
-                                            </p>
-                                        </div>
-                                        {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
-                                            <div className="mt-1 text-xs text-gray-500">
-                                                {Object.entries(item.selectedOptions).map(([key, value]) => (
-                                                    <span key={key} className="block">
-                                                        {key}: {value}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-                                    </div>
+                        cartItems.map((item, index) => {
+                            const itemKey = `${item.productId}-${JSON.stringify(item.selectedOptions)}`;
+                            const discountDetails = itemDiscounts?.get(itemKey);
+                            const hasDiscount = discountDetails && discountDetails.discountAmount > 0;
 
-                                    <div className="flex items-center justify-between mt-4">
-                                        {!item.isGift ? (
-                                            <>
-                                                <div className="flex items-center border border-gray-200">
-                                                    <button
-                                                        onClick={() => updateQuantity(item.productId, item.quantity - 1, item.selectedOptions)}
-                                                        className="p-1 hover:bg-gray-100 transition-colors"
-                                                        disabled={item.quantity <= 1}
-                                                    >
-                                                        <Minus className="w-3 h-3" />
-                                                    </button>
-                                                    <span className="text-sm w-8 text-center">{item.quantity}</span>
-                                                    <button
-                                                        onClick={() => updateQuantity(item.productId, item.quantity + 1, item.selectedOptions)}
-                                                        className="p-1 hover:bg-gray-100 transition-colors"
-                                                    >
-                                                        <Plus className="w-3 h-3" />
-                                                    </button>
-                                                </div>
-                                                <button
-                                                    onClick={() => removeFromCart(item.productId, item.selectedOptions)}
-                                                    className="text-xs text-gray-400 hover:text-red-500 underline transition-colors"
-                                                >
-                                                    Remove
-                                                </button>
-                                            </>
-                                        ) : (
-                                            <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
-                                                Free Gift Included
+                            return (
+                                <div key={`${item.productId}-${index}`} className="flex gap-4">
+                                    <div className="relative w-20 h-24 bg-gray-50 flex-shrink-0">
+                                        <Image
+                                            src={item.image}
+                                            alt={item.name}
+                                            fill
+                                            className="object-cover"
+                                            sizes="80px"
+                                        />
+                                        {item.isGift && (
+                                            <div className="absolute top-0 right-0 bg-[#D4AF37] text-white text-[10px] uppercase font-bold px-2 py-0.5">
+                                                Gift
                                             </div>
                                         )}
+                                        {/* Discount Badges on Image */}
+                                        {!item.isGift && hasDiscount && discountDetails.badges.map((badge: string, idx: number) => (
+                                            <div key={idx} className={`absolute ${idx === 0 ? 'bottom-0 left-0' : 'bottom-5 left-0'} bg-[#D4AF37] text-white text-[10px] uppercase font-bold px-1.5 py-0.5 z-10`}>
+                                                {badge}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div className="flex-1 flex flex-col justify-between">
+                                        <div>
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="text-sm font-medium text-gray-900 pr-4">
+                                                    {item.name}
+                                                </h3>
+                                                <div className="text-right">
+                                                    {hasDiscount ? (
+                                                        <>
+                                                            <p className="text-xs text-gray-400 line-through">
+                                                                {currencySymbol}{discountDetails.originalPrice.toFixed(0)}
+                                                            </p>
+                                                            <p className="text-sm font-medium text-[#D4AF37]">
+                                                                {currencySymbol}{discountDetails.finalPrice.toFixed(0)}
+                                                            </p>
+                                                        </>
+                                                    ) : (
+                                                        <p className="text-sm font-medium text-gray-900">
+                                                            {currencySymbol}{(item.price * item.quantity).toFixed(0)}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                                                <div className="mt-1 text-xs text-gray-500">
+                                                    {Object.entries(item.selectedOptions).map(([key, value]) => (
+                                                        <span key={key} className="block">
+                                                            {key}: {value}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            {/* Detailed Discount Note */}
+                                            {hasDiscount && discountDetails.note && (
+                                                <div className="mt-1 text-xs font-bold text-[#D4AF37]">
+                                                    {discountDetails.note}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex items-center justify-between mt-4">
+                                            {!item.isGift ? (
+                                                <>
+                                                    <div className="flex items-center border border-gray-200">
+                                                        <button
+                                                            onClick={() => updateQuantity(item.productId, item.quantity - 1, item.selectedOptions)}
+                                                            className="p-1 hover:bg-gray-100 transition-colors"
+                                                            disabled={item.quantity <= 1}
+                                                        >
+                                                            <Minus className="w-3 h-3" />
+                                                        </button>
+                                                        <span className="text-sm w-8 text-center">{item.quantity}</span>
+                                                        <button
+                                                            onClick={() => updateQuantity(item.productId, item.quantity + 1, item.selectedOptions)}
+                                                            className="p-1 hover:bg-gray-100 transition-colors"
+                                                        >
+                                                            <Plus className="w-3 h-3" />
+                                                        </button>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => removeFromCart(item.productId, item.selectedOptions)}
+                                                        className="text-xs text-gray-400 hover:text-red-500 underline transition-colors"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
+                                                    Free Gift Included
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
 

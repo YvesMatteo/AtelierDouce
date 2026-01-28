@@ -16,7 +16,15 @@ export interface CartItem {
     isGift?: boolean; // New flag for the free gift
 }
 
-interface CartContextType {
+export interface ItemDiscountDetails {
+    originalPrice: number;
+    finalPrice: number;
+    discountAmount: number;
+    badges: string[]; // "FREE", "20% OFF"
+    note?: string; // "1 FREE, 1 @ 20% OFF" for mixed quantities
+}
+
+export interface CartContextType {
     cartItems: CartItem[];
     isCartOpen: boolean;
     addToCart: (item: CartItem) => void;
@@ -29,6 +37,7 @@ interface CartContextType {
     subtotal: number;
     discount: number;
     cartCount: number;
+    itemDiscounts: Map<string, ItemDiscountDetails>; // Key: productId + JSON.stringify(options)
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -144,47 +153,134 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     // --- Discount Logic ---
     const getCalculatedTotals = () => {
-        // Flatten items into single units for easier calculation
-        // Exclude the gift item from discount calculations (it's already price 0)
-        let units: number[] = [];
+        // We will build a breakdown of every single unit in the cart to strictly determining
+        // which specific unit gets which discount.
+        // Each unit keeps track of its origin item key.
+        type Unit = {
+            price: number;
+            itemIdKey: string; // `${productId}-${JSON.stringify(selectedOptions)}`
+            discountType: 'NONE' | 'FREE' | '20%OFF';
+            discountAmount: number;
+        };
+
+        let allUnits: Unit[] = [];
+        const itemDiscounts = new Map<string, ItemDiscountDetails>();
+
+        // 1. Unroll items into units
         cartItems.forEach(item => {
             if (!item.isGift) {
+                const key = `${item.productId}-${JSON.stringify(item.selectedOptions)}`;
+
+                // Initialize map entry if needed
+                if (!itemDiscounts.has(key)) {
+                    itemDiscounts.set(key, {
+                        originalPrice: item.price * item.quantity,
+                        finalPrice: item.price * item.quantity,
+                        discountAmount: 0,
+                        badges: [],
+                        note: ''
+                    });
+                }
+
                 for (let i = 0; i < item.quantity; i++) {
-                    units.push(item.price);
+                    allUnits.push({
+                        price: item.price,
+                        itemIdKey: key,
+                        discountType: 'NONE',
+                        discountAmount: 0
+                    });
                 }
             }
         });
 
-        // Current subtotal (sum of all paid items actual price)
-        const subtotal = units.reduce((a, b) => a + b, 0);
+        const subtotal = allUnits.reduce((acc, u) => acc + u.price, 0);
 
-        // Sort units by price (cheapest first)
-        units.sort((a, b) => a - b);
-        const count = units.length;
-        let discount = 0;
+        // 2. Sort units by price (ascending) - cheapest first get the best deals usually?
+        // Actually, "Buy 3, Get 1 Free (Cheapest)" usually means the cheapest one is free.
+        allUnits.sort((a, b) => a.price - b.price);
 
+        const count = allUnits.length;
+        let totalDiscount = 0;
+
+        // 3. Apply Rules
         if (count >= 3) {
             // Rule: Buy 3, Get 1 Free (Cheapest)
-            // The first item (index 0) is the cheapest.
-            discount += units[0]; // 100% off cheapest
+            // The first unit (index 0) is free.
+            allUnits[0].discountType = 'FREE';
+            allUnits[0].discountAmount = allUnits[0].price;
 
-            // Rule: Next 2 cheapest items get 20% off
-            // Indices 1 and 2 (if they exist)
-            if (units.length > 1) discount += units[1] * 0.20;
-            if (units.length > 2) discount += units[2] * 0.20;
+            // Rule: Next 2 cheapest items get 20% off (Indices 1 and 2)
+            if (count > 1) {
+                allUnits[1].discountType = '20%OFF';
+                allUnits[1].discountAmount = allUnits[1].price * 0.20;
+            }
+            if (count > 2) {
+                allUnits[2].discountType = '20%OFF';
+                allUnits[2].discountAmount = allUnits[2].price * 0.20;
+            }
+
+            // Any items from index 3+ have NO discount (default)
 
         } else if (count === 2) {
             // Rule: Buy 2, 20% off both
-            discount += units[0] * 0.20;
-            discount += units[1] * 0.20;
+            allUnits[0].discountType = '20%OFF';
+            allUnits[0].discountAmount = allUnits[0].price * 0.20;
+
+            allUnits[1].discountType = '20%OFF';
+            allUnits[1].discountAmount = allUnits[1].price * 0.20;
         }
 
-        const total = subtotal - discount;
+        // 4. Re-aggregate back to items to form ItemDiscountDetails
+        allUnits.forEach(unit => {
+            const details = itemDiscounts.get(unit.itemIdKey)!;
+            details.discountAmount += unit.discountAmount;
 
-        return { subtotal, discount, total };
+            // Collect badge types
+            if (unit.discountType === 'FREE') {
+                if (!details.badges.includes('FREE')) details.badges.push('FREE');
+            } else if (unit.discountType === '20%OFF') {
+                if (!details.badges.includes('20% OFF')) details.badges.push('20% OFF');
+            }
+        });
+
+        // 5. Finalize details (calculate final price, create notes)
+        itemDiscounts.forEach((details, key) => {
+            details.finalPrice = details.originalPrice - details.discountAmount;
+
+            // Create a nice note if mixed
+            // Re-scan units for this key to count exactly
+            const unitsForKey = allUnits.filter(u => u.itemIdKey === key);
+            const freeCount = unitsForKey.filter(u => u.discountType === 'FREE').length;
+            const off20Count = unitsForKey.filter(u => u.discountType === '20%OFF').length;
+            // const standardCount = unitsForKey.filter(u => u.discountType === 'NONE').length;
+
+            let parts = [];
+            if (freeCount > 0) parts.push(`${freeCount} FREE`);
+            if (off20Count > 0) parts.push(`${off20Count} x 20% OFF`);
+
+            if (parts.length > 0 && unitsForKey.length > 1) {
+                // Only show detailed note if there's a mix or quantity > 1 with meaningful info
+                // If all are the same, just the badge is enough usually, but let's see.
+                // If I have 2 items and both are 20% off, badge "20% OFF" is enough.
+                // If I have 3 items: 1 Free, 2 @ 20% -> "1 FREE, 2 x 20% OFF"
+
+                // If the set of discounts is mixed OR (uniform but not ALL items have it - e.g. 4 items, 3 get discount)
+                // Actually if I have 4 of same item: 1 Free, 2 20%, 1 Normal.
+                // Badges: FREE, 20% OFF. Note: "1 FREE, 2 x 20% OFF" (implies 4th is normal)
+
+                // Simplify: If badges has > 1 type OR (badges has 1 type but it doesn't apply to all quantity)
+                if (details.badges.length > 1 || (details.badges.length === 1 && unitsForKey.length > ((details.badges[0] === 'FREE' ? freeCount : off20Count)))) {
+                    details.note = parts.join(', ');
+                }
+            }
+
+            totalDiscount += details.discountAmount;
+        });
+
+        return { subtotal, discount: totalDiscount, total: subtotal - totalDiscount, itemDiscounts };
     };
 
-    const { subtotal, discount, total: cartTotal } = getCalculatedTotals();
+    const { subtotal, discount, total: cartTotal, itemDiscounts } = getCalculatedTotals();
     const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
 
     return (
@@ -202,6 +298,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                 subtotal,
                 discount,
                 cartCount,
+                itemDiscounts,
             }}
         >
             {children}

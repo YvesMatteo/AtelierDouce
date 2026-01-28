@@ -6,7 +6,7 @@ import { cleanProductName } from './utils';
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY! // Use Service Role to bypass RLS
 );
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {

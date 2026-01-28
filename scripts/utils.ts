@@ -11,10 +11,12 @@ export function removeChinese(text: string | null | undefined): string {
 export function cleanProductDescription(html: string | null | undefined): string {
     if (!html) return '';
 
-    // 1. Remove HTML tags
-    let text = html.replace(/<[^>]*>/g, ' ');
+    // 1. Replace block-level tags with newlines to preserve structure
+    let text = html
+        .replace(/<(br|p|div|li|tr)[^>]*>/gi, '\n')
+        .replace(/<[^>]*>/g, ' '); // Strip remaining tags
 
-    // 2. Decode HTML entities (basic common ones)
+    // 2. Decode HTML entities
     text = text
         .replace(/&nbsp;/g, ' ')
         .replace(/&amp;/g, '&')
@@ -23,29 +25,67 @@ export function cleanProductDescription(html: string | null | undefined): string
         .replace(/&quot;/g, '"')
         .replace(/&#39;/g, "'");
 
-    // 3. Remove common CJ/AliExpress noise
-    text = text.replace(/Origin:\s*CN\(Origin\)/gi, '');
-    text = text.replace(/Model Number:[^.]*/gi, '');
-    text = text.replace(/Certification:[^.]*/gi, '');
-    text = text.replace(/Product information:?/gi, '');
-    text = text.replace(/Packing list:?/gi, '');
-    text = text.replace(/Product Image:?/gi, '');
-    text = text.replace(/Overview:?/gi, '');
-    text = text.replace(/Specification:?/gi, '');
-    text = text.replace(/Note:?/gi, '');
+    // 3. Remove known junk (case-insensitive)
+    const junkPatterns = [
+        /Origin:\s*CN\(Origin\)/gi,
+        /Model Number:[^.]*/gi,
+        /Certification:[^.]*/gi,
+        /Product information:?/gi,
+        /Packing list:?/gi,
+        /Product Image:?/gi,
+        /Overview:?/gi,
+        /Specification:?/gi,
+        /Note:?/gi,
+        /Brand Name:/gi,
+        /Material:/gi, // Often redundant or poorly formatted
+        /Size:/gi // Usually better in variants/options, but keep if critical? CJ descriptions are messy.
+    ];
 
-    // 4. Normalize whitespace
-    text = text.replace(/\s+/g, ' ').trim();
+    junkPatterns.forEach(pattern => {
+        text = text.replace(pattern, ' '); // Replace with space to avoid merging words
+    });
 
-    // 5. Remove Chinese characters
-    text = removeChinese(text);
+    // 4. Split by newlines and process each line
+    const lines = text.split('\n');
+    const cleanLines: string[] = [];
+    const seen = new Set<string>();
 
-    // 6. Capitalize first letter
-    if (text.length > 0) {
-        text = text.charAt(0).toUpperCase() + text.slice(1);
+    for (let line of lines) {
+        // Clean the line
+        line = line.replace(/\s+/g, ' ').trim();
+        line = removeChinese(line); // Remove Chinese characters
+
+        // Remove leading/trailing punctuation (like dots from removed sentences)
+        line = line.replace(/^[\.,\-\s]+|[\.,\-\s]+$/g, '');
+
+        // Collapse internal multiple dots/spaces
+        line = line.replace(/\s+/g, ' ').replace(/\s\./g, '.').replace(/\.{2,}/g, '.');
+
+        // Skip empty or very short lines
+        if (line.length < 4) continue;
+
+        // Skip lines that are just junk keywords (with optional colon)
+        if (/^(feature|features|description|package|include|includes|content|spec|specs|specification|specifications|color|colour|size|material|materials)[:\s]*$/i.test(line)) continue;
+
+        // Skip lines with URLs
+        if (line.includes('http')) continue;
+
+        // Check for uniqueness
+        const lower = line.toLowerCase();
+        if (seen.has(lower)) continue;
+        seen.add(lower);
+
+        // Capitalize first letter
+        line = line.charAt(0).toUpperCase() + line.slice(1);
+
+        cleanLines.push(line);
     }
 
-    return text;
+    // 5. Format as bullet points
+    // Limit to top 6 relevant points to keep it short
+    const bulletPoints = cleanLines.slice(0, 6).map(line => `• ${line}`);
+
+    return bulletPoints.join('\n');
 }
 
 export function cleanProductName(name: string): string {
@@ -72,15 +112,24 @@ export function cleanProductName(name: string): string {
     processedName = processedName.replace(/[^\x00-\x7F]/g, ' ');
 
     // 4. Common e-commerce "junk" keywords to strip
+    // Relaxed list: kept "Fashionable", "Winter", etc. as they are descriptive.
     const junkKeywords = [
-        'Amazon', 'Independent Station', 'Hot Selling', 'New', '2024', '2025', 'Cross-border',
+        'Amazon', 'Independent Station', 'Hot Selling', 'New', '2023', '2024', '2025', 'Cross-border',
         'Explosive', 'Direct Sales', 'Supplier', 'Wholesale', 'Factory', 'In Stock', 'Customizable',
-        'Large-sized', 'Small-sized', 'Fashionable', 'Western', 'Versatile', 'English', 'Style',
-        'Autumn', 'Winter', 'Spring', 'Summer', 'Niche', 'Design', 'Premium', 'High-grade'
+        'Large-sized', 'Small-sized', 'Niche', 'Design', 'High-grade'
     ];
 
     const junkRegex = new RegExp(`\\b(${junkKeywords.join('|')})\\b`, 'gi');
     processedName = processedName.replace(junkRegex, '');
+
+    // Extra: Remove technical codes like "Ag1-1105", "Drop002", "S925" (unless context implies material?)
+    // This regex looks for:
+    // - "Drop" followed by digits
+    // - "Ag" followed by digits/dashes
+    // - Any standalone "A" followed by digits like "A6090"
+    processedName = processedName.replace(/\bDrop\d+\b/gi, '');
+    processedName = processedName.replace(/\bAg\d+[-]?\d*\b/gi, '');
+    processedName = processedName.replace(/\b[A-Z]\d{3,}\b/g, ''); // e.g. A6090
 
     // 5. Normalize and deduplicate words
     const words = processedName
