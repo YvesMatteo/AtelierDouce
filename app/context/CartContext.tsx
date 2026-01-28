@@ -42,17 +42,15 @@ export interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-// The Free Gift Product Details (Niche Plaid Cloud Bag - Light Blue)
-// Using ID from DB: 2bff64e3-0ff2-4fda-a02f-a4545f2cf578 (CJ ID: 1746094682741936128)
-// We use a different ID for the gift version to avoid merging with a paid version of the same bag?
-// Or we just use a flag isGift=true.
+// The Free Gift Product Details (Elegant Collection Piece - Earrings)
+// Using ID from DB: a6d7d176-ea9e-4070-b0d1-11cc05ef283d
 const GIFT_ITEM: CartItem = {
-    productId: 'GIFT-CLOUD-BAG', // Virtual ID to prevent merging with real product
-    name: 'Free Gift: Niche Plaid Cloud Bag',
+    productId: 'GIFT-EARRINGS', // Virtual ID
+    name: 'Free Gift: Elegant Collection Piece',
     price: 0, // It's free
-    image: 'https://cf.cjdropshipping.com/quick/product/d4273748-7689-4640-ad06-9119fef2c10a.jpg', // Green one or random? Let's use Light Blue or similar.
+    image: 'https://cf.cjdropshipping.com/1618206790596.jpg', // Main image (Goldish)
     quantity: 1,
-    selectedOptions: { Color: 'Light Blue' },
+    selectedOptions: { Color: 'Gold' },
     isGift: true
 };
 
@@ -90,7 +88,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const hasGift = cartItems.some(i => i.isGift);
 
         if (paidCount >= 4 && !hasGift) {
-            // Add gift
+            // Add gift (Default to Gold)
             setCartItems(prev => [...prev, { ...GIFT_ITEM }]);
         } else if (paidCount < 4 && hasGift) {
             // Remove gift

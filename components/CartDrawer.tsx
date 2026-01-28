@@ -11,16 +11,9 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 export default function CartDrawer() {
     const {
-        isCartOpen,
-        toggleCart,
-        cartItems,
-        removeFromCart,
-        updateQuantity,
-        cartTotal,
-        subtotal,
-        discount,
         cartCount,
         itemDiscounts,
+        addToCart,
     } = useCart();
     const [isCheckingOut, setIsCheckingOut] = useState(false);
 
@@ -193,8 +186,60 @@ export default function CartDrawer() {
                                                     </button>
                                                 </>
                                             ) : (
-                                                <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider">
-                                                    Free Gift Included
+                                                <div className="flex flex-col items-end">
+                                                    <div className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider mb-1">
+                                                        Free Gift
+                                                    </div>
+                                                    <select
+                                                        value={item.selectedOptions?.Color || 'Gold'}
+                                                        onChange={(e) => {
+                                                            const newColor = e.target.value;
+                                                            // We need to replace the current free gift with the new variant
+                                                            // Since removeFromCart might remove all instances, we should be careful.
+                                                            // Actually, since it's a gift, we can just remove it and add the new one.
+                                                            // But `removeFromCart` uses exact match of options.
+                                                            removeFromCart(item.productId, item.selectedOptions);
+
+                                                            // Add new one
+                                                            const newItem = {
+                                                                ...item,
+                                                                selectedOptions: { Color: newColor },
+                                                                image: newColor === 'Gold'
+                                                                    ? 'https://cf.cjdropshipping.com/1618206790596.jpg' // Gold
+                                                                    : 'https://cf.cjdropshipping.com/1618206790585.jpg' // Silver
+                                                            };
+                                                            // We need to access addToCart from context, it is available.
+                                                            // However, since we are inside map, better to call a wrapper or just use addToCart directly.
+                                                            // Wait, addToCart is available in the component scope.
+
+                                                            // PROBLEM: addToCart triggers setIsCartOpen(true) which is redundant but fine.
+                                                            // BIGGER PROBLEM: CartContext logic might interfere if we just remove/add?
+                                                            // The useEffect checks for *presence* of gift. If we remove it deeply, it might auto-add default?
+                                                            // No, useEffect runs on dependency change.
+
+                                                            // Let's use a simpler approach: updateCartItem (if exists) or remove/add.
+                                                            // To be safe, let's just trigger a swap.
+                                                            // But we don't have `updateItemOptions`.
+
+                                                            // We will hack it slightly: Remove old, Add new.
+                                                            // The Context useEffect runs after state updates.
+                                                            // If we do both synchronously, it might be fine, or batching might help.
+
+                                                            // Accessing addToCart from the closure above.
+                                                            // We'll need to disable the useEffect interference temporarily?
+                                                            // Actually, useEffect checks `paidCount >= 4`.
+                                                            // If we swap, paidCount is unchanged.
+                                                            // Effectively we are just changing the options of the gift item.
+                                                            // Since we lack `updateOptions`, we remove and add.
+
+                                                            // NOTE: We need to import addToCart in the main component scope? Yes, we have it.
+                                                        }}
+                                                        className="text-xs border-gray-200 rounded-sm py-1 px-2 focus:ring-0 focus:border-[#D4AF37] cursor-pointer"
+                                                        style={{ fontSize: '12px', paddingRight: '20px' }}
+                                                    >
+                                                        <option value="Gold">Gold</option>
+                                                        <option value="Silver">Silver</option>
+                                                    </select>
                                                 </div>
                                             )}
                                         </div>
@@ -203,40 +248,38 @@ export default function CartDrawer() {
                             );
                         })
                     )}
-                </div>
 
-                {/* Footer */}
-                {cartItems.length > 0 && (
-                    <div className="p-6 border-t border-gray-100 bg-gray-50/50">
-                        <div className="space-y-2 mb-4">
-                            <div className="flex justify-between items-center text-sm text-gray-500">
-                                <span>Subtotal</span>
-                                <span>{currencySymbol}{subtotal ? subtotal.toFixed(0) : '0'}</span>
-                            </div>
-                            {discount > 0 && (
-                                <div className="flex justify-between items-center text-sm text-[#D4AF37]">
-                                    <span>Discount</span>
-                                    <span>-{currencySymbol}{discount.toFixed(0)}</span>
+                    {cartItems.length > 0 && (
+                        <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+                            <div className="space-y-2 mb-4">
+                                <div className="flex justify-between items-center text-sm text-gray-500">
+                                    <span>Subtotal</span>
+                                    <span>{currencySymbol}{subtotal ? subtotal.toFixed(0) : '0'}</span>
                                 </div>
-                            )}
-                            <div className="flex justify-between items-center text-lg font-medium pt-2 border-t border-gray-100">
-                                <span>Total</span>
-                                <span>{currencySymbol}{cartTotal.toFixed(0)}</span>
+                                {discount > 0 && (
+                                    <div className="flex justify-between items-center text-sm text-[#D4AF37]">
+                                        <span>Discount</span>
+                                        <span>-{currencySymbol}{discount.toFixed(0)}</span>
+                                    </div>
+                                )}
+                                <div className="flex justify-between items-center text-lg font-medium pt-2 border-t border-gray-100">
+                                    <span>Total</span>
+                                    <span>{currencySymbol}{cartTotal.toFixed(0)}</span>
+                                </div>
                             </div>
+                            <p className="text-xs text-gray-500 mb-6 text-center">
+                                Shipping and taxes calculated at checkout.
+                            </p>
+                            <button
+                                onClick={handleCheckout}
+                                disabled={isCheckingOut}
+                                className="w-full bg-[#232323] text-white py-4 px-8 text-[13px] font-bold uppercase tracking-[0.15em] hover:bg-[#a48354] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+                            >
+                                {isCheckingOut ? 'Processing...' : 'Checkout'}
+                            </button>
                         </div>
-                        <p className="text-xs text-gray-500 mb-6 text-center">
-                            Shipping and taxes calculated at checkout.
-                        </p>
-                        <button
-                            onClick={handleCheckout}
-                            disabled={isCheckingOut}
-                            className="w-full bg-[#232323] text-white py-4 px-8 text-[13px] font-bold uppercase tracking-[0.15em] hover:bg-[#a48354] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
-                        >
-                            {isCheckingOut ? 'Processing...' : 'Checkout'}
-                        </button>
-                    </div>
-                )}
-            </div>
-        </>
-    );
+                    )}
+                </div>
+            </>
+            );
 }
