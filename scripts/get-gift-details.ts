@@ -1,35 +1,33 @@
 
-import 'dotenv/config';
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-async function getGift() {
-    const id = '1746094682741936128'; // Niche Plaid Cloud Bag (CJ ID)
-    // Or we should check if this is the database UUID or CJ ID. 
-    // In apply-selected-images.ts, it was used as 'cj_product_id'.
-    // Let's query by cj_product_id first.
+async function getGiftDetails() {
+    const productId = 'a6d7d176-ea9e-4070-b0d1-11cc05ef283d';
 
-    const { data, error } = await supabase
+    const { data: product, error } = await supabase
         .from('products')
         .select('*')
-        .eq('cj_product_id', id)
+        .eq('id', productId)
         .single();
 
-    if (data) {
-        console.log(JSON.stringify(data, null, 2));
-    } else {
-        // Try UUID just in case
-        const { data: data2 } = await supabase
-            .from('products')
-            .select('*')
-            .eq('id', id)
-            .single();
-        console.log(JSON.stringify(data2, null, 2));
+    if (error) {
+        console.error('Error:', error);
+        return;
     }
+
+    console.log('Product ID:', product.id);
+    console.log('CJ Product ID:', product.cj_product_id);
+    console.log('Variants:', JSON.stringify(product.variants, null, 2));
+    console.log('Options:', JSON.stringify(product.options, null, 2));
 }
 
-getGift();
+getGiftDetails();

@@ -68,15 +68,31 @@ export async function POST(request: Request) {
                 const product = item.price?.product as Stripe.Product;
 
                 // Handle free gift items
+                // Handle free gift items
                 if (product.metadata?.is_gift === 'true') {
-                    // Gift item - use hardcoded CJ ID for the gift product
+                    // Find the gift item in cart_items metadata to get the selected color
+                    const giftCartItem = cartItems.find((ci: any) => ci.is_gift === true);
+                    const selectedColor = giftCartItem?.selected_options?.Color || 'Gold'; // Default to Gold
+
+                    // Map Color to CJ Variant ID
+                    // Gold: 1381486070289534976
+                    // Silver: 1381486070348255232
+                    const giftCjVariantId = selectedColor === 'Silver'
+                        ? '1381486070348255232'
+                        : '1381486070289534976';
+
+                    console.log(`🎁 Processing Gift: ${selectedColor} (CJ ID: ${giftCjVariantId})`);
+
                     await supabase.from('order_items').insert({
                         order_id: order.id,
                         product_id: null, // Gift might not be in our DB
                         quantity: 1,
                         price: 0,
-                        options: { is_gift: true },
-                        cj_variant_id: '2402050548251627600', // Cloud bag CJ variant ID
+                        options: {
+                            is_gift: true,
+                            Color: selectedColor
+                        },
+                        cj_variant_id: giftCjVariantId,
                     });
                     continue;
                 }

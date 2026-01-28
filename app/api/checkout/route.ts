@@ -26,14 +26,21 @@ export async function POST(request: Request) {
             const { productId, quantity = 1, selectedOptions } = item;
 
             // Handle Free Gift
-            if (productId === 'GIFT-CLOUD-BAG') {
+            // Handle Free Gift
+            if (productId === 'GIFT-EARRINGS') {
                 lineItems.push({
                     price_data: {
                         currency: currencyCode.toLowerCase(),
                         product_data: {
-                            name: 'Free Gift: Niche Plaid Cloud Bag',
-                            images: ['https://cf.cjdropshipping.com/quick/product/d4273748-7689-4640-ad06-9119fef2c10a.jpg'],
-                            metadata: { is_gift: 'true' },
+                            name: 'Free Gift: Elegant Collection Piece (Earrings)',
+                            images: [selectedOptions?.Color === 'Silver'
+                                ? 'https://cf.cjdropshipping.com/1618206790585.jpg' // Silver
+                                : 'https://cf.cjdropshipping.com/1618206790596.jpg' // Gold
+                            ],
+                            metadata: {
+                                is_gift: 'true',
+                                cj_product_id: '1381486068892831744'
+                            },
                         },
                         unit_amount: 0,
                     },
@@ -41,8 +48,10 @@ export async function POST(request: Request) {
                 });
 
                 metadataItems.push({
-                    product_id: 'GIFT-CLOUD-BAG',
+                    product_id: 'GIFT-EARRINGS',
+                    cj_product_id: '1381486068892831744',
                     quantity: 1,
+                    selected_options: selectedOptions, // Pass Gold/Silver choice
                     is_gift: true
                 });
                 continue;
@@ -110,7 +119,7 @@ export async function POST(request: Request) {
 
         // Prepare items for calculation
         const calcItems = items
-            .filter((item: any) => item.productId !== 'GIFT-CLOUD-BAG')
+            .filter((item: any) => item.productId !== 'GIFT-EARRINGS')
             .map((item: any) => ({
                 price: singleItemUnitAmount,
                 quantity: item.quantity || 1
