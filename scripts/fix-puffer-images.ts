@@ -28,16 +28,24 @@ async function main() {
     console.log('Product:', product.name);
     const images = product.images as string[];
 
-    // Current order shows back of jacket first (index 0)
-    // Move the front-facing image to first position
-    // Based on typical product photo patterns, index 1 often shows the front
-    // Let's swap index 0 and index 1
+    // Filter out null/undefined images
+    const validImages = images.filter(img => img && typeof img === 'string' && img.length > 0);
 
-    const newImages = [...images];
-    // Move index 1 (likely front view) to position 0
-    const frontImage = newImages[1];
-    newImages.splice(1, 1);
-    newImages.unshift(frontImage);
+    console.log('Valid images found:', validImages.length);
+
+    if (validImages.length === 0) {
+        console.error('No valid images found for product!');
+        return;
+    }
+
+    // Use validImages directly. If we specifically need "front facing" to be first,
+    // and we verified the one we want IS the one surviving (the URL matches), we are good.
+    // The previous logic assumed index 1 was front. Inspect showed index 1 was the valid URL.
+    // So 'validImages' will likely contain just that 1 image (if index 0 was null).
+
+    const newImages = [...validImages];
+    // If we have multiple and need to swap, do it here. 
+    // But since we had [null, url], we now have [url].
 
     console.log('\nNew image order:');
     newImages.forEach((img, i) => console.log(i + ': ' + img));
