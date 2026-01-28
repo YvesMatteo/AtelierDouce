@@ -21,20 +21,22 @@ export const calculateDiscount = (
     const count = units.length;
     let discount = 0;
 
-    if (count >= 3) {
-        // Rule: Buy 3, Get 1 Free (Cheapest)
+    if (count >= 4) {
+        // Rule: Buy 4, Get 1 Free (Cheapest)
         // The first item (index 0) is the cheapest.
         discount += units[0]; // 100% off cheapest
 
-        // Rule: Next 2 cheapest items get 20% off
-        // Indices 1 and 2 (if they exist)
-        if (units.length > 1) discount += units[1] * 0.20;
-        if (units.length > 2) discount += units[2] * 0.20;
+        // Rule: Next cheapest items get 15% off
+        // Indices 1, 2, 3...
+        for (let i = 1; i < count; i++) {
+            discount += units[i] * 0.15;
+        }
 
-    } else if (count === 2) {
-        // Rule: Buy 2, 20% off both
-        discount += units[0] * 0.20;
-        discount += units[1] * 0.20;
+    } else if (count >= 3) {
+        // Rule: Buy 3, 15% off all
+        for (let i = 0; i < count; i++) {
+            discount += units[i] * 0.15;
+        }
     }
 
     return discount;
