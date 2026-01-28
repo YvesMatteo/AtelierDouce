@@ -17,12 +17,12 @@ export default function ProductCard({ product, rate, code }: ProductCardProps) {
 
     return (
         <Link href={`/product/${product.id}`} className="group cursor-pointer block h-full">
-            <div className="relative aspect-[3/4] overflow-hidden bg-white mb-6">
+            <div className="relative aspect-[3/4] overflow-hidden bg-[#f5f5f5] mb-6 p-3">
                 <Image
                     src={product.images?.[0] || '/placeholder.jpg'}
                     alt={product.name}
                     fill
-                    className="object-cover transition-transform duration-[1.5s] ease-in-out scale-[1.15] origin-bottom group-hover:scale-[1.25]"
+                    className="object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                 />
                 {/* Quick Add Overlay - only visible on hover (desktop) */}
