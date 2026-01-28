@@ -14,6 +14,10 @@ const nextConfig = {
                 protocol: 'https',
                 hostname: '*.cjdropshipping.com',
             },
+            {
+                protocol: 'https',
+                hostname: 'yefzblyovihrvoqcqjtg.supabase.co',
+            },
         ],
     },
 };
