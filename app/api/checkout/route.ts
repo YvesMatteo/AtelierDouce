@@ -146,7 +146,12 @@ export async function POST(request: Request) {
             success_url: `${request.headers.get('origin')}/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${request.headers.get('origin')}/`,
             shipping_address_collection: {
-                allowed_countries: ['US', 'CA', 'GB', 'AU', 'DE', 'FR', 'NL', 'BE'],
+                allowed_countries: [
+                    'US', 'CA', 'GB', 'AU', 'JP',
+                    'DE', 'FR', 'ES', 'IT', 'NL', 'BE', 'AT', 'IE', 'FI', 'PT', // Eurozone main
+                    'GR', 'LU', 'CY', 'EE', 'LV', 'LT', 'MT', 'SK', 'SI', 'HR', // Eurozone others
+                    'CH', 'SE', 'NO', 'DK', 'PL', 'LI' // Non-Euro Europe
+                ],
             },
             metadata: {
                 cart_items: JSON.stringify(metadataItems).substring(0, 500),

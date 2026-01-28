@@ -31,6 +31,7 @@ export async function processOrderToCJ(orderId: string): Promise<{ success: bool
         // 2. Prepare CJ order request
         const shippingAddress = order.shipping_address as any;
 
+
         // Map products
         // Handle case where product might not have a direct mapping (shouldn't happen with our sync)
         const products = order.order_items.map((item: any) => {
@@ -48,11 +49,22 @@ export async function processOrderToCJ(orderId: string): Promise<{ success: bool
             throw new Error('No valid CJ products found in order');
         }
 
+        // CJ requires full country name (e.g. "United States") for shippingCountry
+        // but Stripe gives us ISO code (e.g. "US")
+        const countryCode = shippingAddress?.country || 'US';
+        let countryName = countryCode;
+        try {
+            const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+            countryName = regionNames.of(countryCode) || countryCode;
+        } catch (e) {
+            console.warn(`Could not resolving country name for ${countryCode}`);
+        }
+
         const cjOrder: CJOrderRequest = {
             orderNumber: order.id,
             shippingZip: shippingAddress?.postal_code || '00000',
-            shippingCountry: shippingAddress?.country || 'US',
-            shippingCountryCode: shippingAddress?.country || 'US',
+            shippingCountry: countryName, // Full name resolved from code
+            shippingCountryCode: countryCode, // ISO Code
             shippingProvince: shippingAddress?.state || '',
             shippingCity: shippingAddress?.city || '',
             shippingAddress: [shippingAddress?.line1, shippingAddress?.line2].filter(Boolean).join(', '),
