@@ -72,7 +72,7 @@ export default async function Home(props: HomeProps) {
       {/* Hero Section */}
       <section className="relative h-[60vh] md:h-[85vh] w-full overflow-hidden">
         <Image
-          src="/hero-home.png"
+          src="/hero-home-new.png"
           alt="Cozy Luxury Home"
           fill
           className="object-cover"
