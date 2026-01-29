@@ -79,7 +79,7 @@ export default async function Home(props: HomeProps) {
           priority
         />
         <div className="absolute inset-0 bg-black/20" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-6">
+        <div className="absolute inset-0 flex flex-col items-center justify-end text-center text-white p-6 pb-32">
           <span className="text-sm md:text-base tracking-[0.2em] uppercase mb-4 font-sans drop-shadow-md">
             {subtitle}
           </span>
