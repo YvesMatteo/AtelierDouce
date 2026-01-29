@@ -51,8 +51,8 @@ export default async function Home(props: HomeProps) {
   const { code, rate } = getCurrencyForCountry(country);
 
   // Dynamic Title Construction
-  let title = 'Winter Essentials';
-  let subtitle = 'Premium Home Comfort';
+  let title = 'Aprés Ski Essentials';
+  let subtitle = 'Alpine Luxury & Comfort';
 
   if (search) {
     title = `Results for "${search}"`;
