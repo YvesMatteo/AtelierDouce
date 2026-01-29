@@ -18,6 +18,7 @@ async function getProducts(gender?: string, category?: string, search?: string):
     .from('products')
     .select('*')
     .eq('is_active', true)
+    .order('category', { ascending: true })
     .order('created_at', { ascending: false });
 
   if (gender) {
