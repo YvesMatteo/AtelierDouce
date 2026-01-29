@@ -92,7 +92,9 @@ export default async function Home(props: HomeProps) {
       {/* Introduction */}
       {!category && (
         <section className="py-24 px-6 md:px-12 max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-serif mb-6 text-[#171717]">The Art of Comfort</h2>
+          <h1 className="text-4xl md:text-5xl font-serif text-gray-900 mb-6 relative z-10">
+            The Art of Bourgeois
+          </h1>
           <div className="w-12 h-[1px] bg-[#a48354] mx-auto mb-8"></div>
           <p className="text-[#5e5e5e] leading-loose font-light text-[15px]">
             Discover our curated collection of premium accessories and winter wear. Designed for those who appreciate
