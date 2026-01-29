@@ -16,6 +16,13 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2000862978889248769)
 - **Link to QkSource**: [View Product](https://qksource.com/product/down-jacket-p-2000862978889248769.html)
 
+#### Winter Faux Fur Coat
+- **Product Thumbnail**: ![Winter Coat](https://oss.yesourcing.com/operation-center/file_202512290928012005571498424934400.png)
+- **Website Price**: $49.95
+- **Supplier Price**: $16.42
+- **Margin**: $33.53 (67%)
+- **Link to QkSource**: [View Product](https://qksource.com/product/winter-coat-warm-lapel-long-fluffy-faux-fur-coat-women-loose-long-sleeve-jacket-outerwear-clothing-p-2501070601131628700.html)
+
 #### Hood Warm Jacket Brown
 - **Product Thumbnail**: ![Hood Warm Jacket](https://yefzblyovihrvoqcqjtg.supabase.co/storage/v1/object/public/products/brown-puffer-white-1769599642151.png)
 - **Website Price**: $35.00

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
 import { supabase } from '@/lib/supabase';
 import { processOrderAutomation } from '@/lib/automation';
+import { sendOrderEmail } from '@/lib/email';
 import Stripe from 'stripe';
 
 export async function POST(request: Request) {
@@ -139,7 +140,17 @@ export async function POST(request: Request) {
             console.log('📝 Order items saved');
 
             // Trigger order automation (CJ, Qksource, etc.)
-            await processOrderAutomation(order.id);
+            // await processOrderAutomation(order.id);
+            console.log('       🛑 Automation disabled (Manual Fulfillment Mode)');
+
+            // Send Email Notification
+            await sendOrderEmail(order, cartItems.map((ci: any) => ({
+                name: ci.name || 'Unknown Product',
+                quantity: ci.quantity || 1,
+                options: ci.selected_options,
+                cj_product_id: ci.cj_product_id,
+                supplier: ci.supplier
+            })));
 
         } catch (error) {
             console.error('Error processing order:', error);

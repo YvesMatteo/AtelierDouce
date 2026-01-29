@@ -6,37 +6,25 @@ import { Menu, X, ShoppingBag, Search } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
 import SearchModal from './SearchModal';
 
-/**
- * Taxonomy definition
- * Gender -> Categories
- */
-const TAXONOMY = {
-    Woman: [
-        { name: 'New Arrivals', href: '/?gender=Woman&sort=new' },
-        { name: 'Clothing', href: '/?gender=Woman&category=Clothing' },
-        { name: 'Shoes', href: '/?gender=Woman&category=Shoes' },
-        { name: 'Bags', href: '/?gender=Woman&category=Bags' },
-        { name: 'Jewelry', href: '/?gender=Woman&category=Jewelry' },
-        { name: 'Accessories', href: '/?gender=Woman&category=Accessories' },
-    ],
-    Man: [
-        // Placeholder for future
-        { name: 'New Arrivals', href: '/?gender=Man&sort=new' },
-    ]
-};
 
-type ViewState = 'MAIN' | 'WOMAN' | 'MAN';
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [view, setView] = useState<ViewState>('MAIN');
     const { toggleCart, cartCount } = useCart();
 
     const reset = () => {
         setIsOpen(false);
-        setTimeout(() => setView('MAIN'), 300); // Reset view after transition
     };
+
+    const CATEGORIES = [
+        { name: 'New Arrivals', href: '/?sort=new' },
+        { name: 'Clothing', href: '/?category=Clothing' },
+        { name: 'Shoes', href: '/?category=Shoes' },
+        { name: 'Bags', href: '/?category=Bags' },
+        { name: 'Jewelry', href: '/?category=Jewelry' },
+        { name: 'Accessories', href: '/?category=Accessories' },
+    ];
 
     return (
         <>
@@ -96,13 +84,7 @@ export default function Sidebar() {
             <div className={`fixed top-0 left-0 bottom-0 w-[300px] bg-white z-50 transform transition-transform duration-300 ease-out flex flex-col ${isOpen ? 'translate-x-0' : '-translate-x-full'
                 }`}>
                 <div className="p-6 flex justify-between items-center">
-                    {view !== 'MAIN' ? (
-                        <button onClick={() => setView('MAIN')} className="text-sm font-bold uppercase tracking-widest hover:text-[#a48354] flex items-center gap-1">
-                            ← Back
-                        </button>
-                    ) : (
-                        <span className="text-sm font-bold uppercase tracking-widest">Menu</span>
-                    )}
+                    <span className="text-sm font-bold uppercase tracking-widest">Menu</span>
 
                     <button
                         onClick={reset}
@@ -114,68 +96,22 @@ export default function Sidebar() {
 
                 <nav className="flex-1 overflow-y-auto px-6 pb-6">
                     <ul className="space-y-6">
-                        {view === 'MAIN' && (
-                            <>
-                                <li>
-                                    <button onClick={() => setView('WOMAN')} className="text-2xl font-serif text-[#171717] hover:text-[#a48354] transition-colors w-full text-left flex justify-between items-center group">
-                                        Woman
-                                        <span className="text-sm text-gray-300 group-hover:text-[#a48354] transition-colors">→</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button onClick={() => setView('MAN')} className="text-2xl font-serif text-[#171717] hover:text-[#a48354] transition-colors w-full text-left flex justify-between items-center group">
-                                        Man
-                                        <span className="text-sm text-gray-300 group-hover:text-[#a48354] transition-colors">→</span>
-                                    </button>
-                                </li>
-                                <li className="pt-4 border-t border-gray-100">
-                                    <Link href="/" onClick={reset} className="text-lg font-serif text-[#171717] hover:text-[#a48354] transition-colors block">
-                                        Shop All
-                                    </Link>
-                                </li>
-                            </>
-                        )}
-
-                        {view === 'WOMAN' && (
-                            <>
-                                <li className="mb-6">
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Woman's Collection</span>
-                                </li>
-                                {TAXONOMY.Woman.map((item) => (
-                                    <li key={item.name}>
-                                        <Link
-                                            href={item.href}
-                                            onClick={reset}
-                                            className="text-xl font-serif text-[#171717] hover:text-[#a48354] transition-colors block"
-                                        >
-                                            {item.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </>
-                        )}
-
-                        {view === 'MAN' && (
-                            <>
-                                <li className="mb-6">
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">Man's Collection</span>
-                                </li>
-                                <li>
-                                    <p className="text-sm text-gray-500 italic">Coming soon...</p>
-                                </li>
-                                {TAXONOMY.Man.map((item) => (
-                                    <li key={item.name}>
-                                        <Link
-                                            href={item.href}
-                                            onClick={reset}
-                                            className="text-xl font-serif text-[#171717] hover:text-[#a48354] transition-colors block"
-                                        >
-                                            {item.name}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </>
-                        )}
+                        {CATEGORIES.map((item) => (
+                            <li key={item.name}>
+                                <Link
+                                    href={item.href}
+                                    onClick={reset}
+                                    className="text-xl font-serif text-[#171717] hover:text-[#a48354] transition-colors block"
+                                >
+                                    {item.name}
+                                </Link>
+                            </li>
+                        ))}
+                        <li className="pt-4 border-t border-gray-100">
+                            <Link href="/?category=All" onClick={reset} className="text-lg font-serif text-[#171717] hover:text-[#a48354] transition-colors block">
+                                Shop All
+                            </Link>
+                        </li>
                     </ul>
                 </nav>
 

@@ -52,21 +52,7 @@ export default function ProductCarousel({ products, rate, code }: ProductCarouse
             </div>
 
             {/* Navigation Buttons */}
-            <button
-                onClick={scrollPrev}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white shadow-lg"
-                aria-label="Previous slide"
-            >
-                <ChevronLeft className="w-5 h-5 text-[#171717]" />
-            </button>
 
-            <button
-                onClick={scrollNext}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity hover:bg-white shadow-lg"
-                aria-label="Next slide"
-            >
-                <ChevronRight className="w-5 h-5 text-[#171717]" />
-            </button>
         </div>
     );
 }

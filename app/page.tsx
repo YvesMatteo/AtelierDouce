@@ -163,7 +163,7 @@ export default async function Home(props: HomeProps) {
             <h4 className="text-[#dfe3e8] uppercase tracking-widest text-xs font-bold mb-6">Shop</h4>
             <ul className="space-y-4 text-xs">
               <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/?category=Woman" className="hover:text-white transition-colors">Woman</Link></li>
+              <li><Link href="/?sort=new" className="hover:text-white transition-colors">New Arrivals</Link></li>
               <li><Link href="/?category=Accessories" className="hover:text-white transition-colors">Accessories</Link></li>
             </ul>
           </div>
