@@ -22,7 +22,7 @@ export default function ProductCard({ product, rate, code }: ProductCardProps) {
                     src={product.images?.[0] || '/placeholder.jpg'}
                     alt={product.name}
                     fill
-                    className="object-contain p-2 transition-transform duration-500 ease-out group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                 />
                 {/* Quick Add Overlay - only visible on hover (desktop) */}

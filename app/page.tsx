@@ -5,6 +5,7 @@ import { Product } from '@/lib/types';
 import { headers } from 'next/headers';
 import { getCurrencyForCountry, calculatePrice, formatPrice, BASE_PRICE_USD } from '@/lib/currency';
 import ProductCarousel from '@/components/ProductCarousel';
+import ProductGrid from '@/components/ProductGrid';
 
 // ... imports
 
@@ -111,7 +112,11 @@ export default async function Home(props: HomeProps) {
             <span className="text-sm text-[#5e5e5e]">{products.length} products</span>
           </div>
 
-          <ProductCarousel products={products} rate={rate} code={code} />
+          {(!category && !search && !gender) ? (
+            <ProductCarousel products={products.slice(0, 4)} rate={rate} code={code} />
+          ) : (
+            <ProductGrid products={products} rate={rate} code={code} />
+          )}
 
           <div className="flex justify-center mt-12">
             <Link
