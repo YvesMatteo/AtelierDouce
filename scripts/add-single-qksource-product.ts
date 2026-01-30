@@ -7,19 +7,31 @@ import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 
 // Product Details from Scraping
-const PRODUCT = {
-    id: '2501070601131628700', // QkSource ID
-    name: 'Winter Coat Warm Lapel Long Fluffy Faux Fur Coat',
-    description: 'Winter Coat Warm Lapel Long Fluffy Faux Fur Coat Women Loose Long Sleeve Jacket Outerwear Clothing. Available in Dark Brown, Dark Gray, Leopard Print.',
-    categoryId: 'Outerwear', // Mapping to our categories
+const BASE_PRODUCT = {
+    id: '2510040808101612300', // QkSource ID
+    name: "Women's New Professional Double-board Waterproof Ski Suit",
+    description: "Women's New Professional Double-board Waterproof Ski Suit. Features breathable, waterproof fabric (coefficient 20000). Available in multiple colors: Black, White, Red, Pink, Rose Red, Orange Red.",
     gender: 'Woman',
-    retailPrice: 49.95,
-    supplierPrice: 16.42,
+    retailPrice: 399.00,
+    supplierPrice: 100.00, // Placeholder
     images: [
-        'https://oss.yesourcing.com/operation-center/file_202512290928012005571498424934400.png' // Main image
+        "https://cf.cjdropshipping.com/quick/product/f7ef2a28-9ea5-4840-88f2-7d9f1f53cee8.jpg",
+        "https://cf.cjdropshipping.com/quick/product/27ff6a0f-4ace-4428-9c14-719f43fc98c4.jpg",
+        "https://cf.cjdropshipping.com/quick/product/2a7b53b6-fce7-4aae-8c3e-1c037aa826ac.jpg",
+        "https://cf.cjdropshipping.com/quick/product/13bb6d9e-f98a-4870-9f4e-b300cf625b84.jpg",
+        "https://cf.cjdropshipping.com/quick/product/873bc308-e0a5-4bb1-a250-78277fb9a0df.jpg",
+        "https://cf.cjdropshipping.com/quick/product/238db90d-b3ed-4c1f-adce-a27cfff78e39.jpg",
+        "https://cf.cjdropshipping.com/quick/product/c8aa22b6-b983-46a3-a985-0c8e306ff3f5.jpg",
+        "https://cf.cjdropshipping.com/quick/product/137b5911-8dd8-446c-bb9e-a346f2ab26de.jpg"
     ],
-    supplier: 'Qksource' // New field support
+    supplier: 'Qksource',
+    options: [
+        { name: 'Size', values: ['XS', 'S', 'M', 'L', 'XL'] },
+        { name: 'Color', values: ['Black', 'White', 'Red', 'Pink', 'Rose Red', 'Orange Red'] }
+    ]
 };
+
+const TARGET_CATEGORIES = ['Tops', 'Bottoms'];
 
 // Initialize clients
 const supabase = createClient(
@@ -31,8 +43,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2023-10-16' as any,
 });
 
-async function addProduct() {
-    console.log(`🚀 Starting single product add for: ${PRODUCT.name}`);
+async function addProductForCategory(category: string) {
+    const listId = `${BASE_PRODUCT.id}-${category.toLowerCase()}`;
+    console.log(`🚀 Starting product add for: ${BASE_PRODUCT.name} [${category}]`);
 
     try {
         // 1. Stripe Integration
@@ -43,7 +56,7 @@ async function addProduct() {
         const { data: existingProduct } = await supabase
             .from('products')
             .select('stripe_product_id, stripe_price_id')
-            .eq('cj_product_id', PRODUCT.id) // We use cj_product_id col for ALL IDs currently
+            .eq('cj_product_id', listId)
             .single();
 
         if (existingProduct?.stripe_product_id) {
@@ -53,65 +66,69 @@ async function addProduct() {
         } else {
             console.log('   💳 Creating Stripe product...');
             const sProd = await stripe.products.create({
-                name: PRODUCT.name,
-                description: PRODUCT.description,
-                images: PRODUCT.images,
+                name: `${BASE_PRODUCT.name} (${category})`, // Unique name for Stripe to avoid confusion if looking at dashboard
+                description: BASE_PRODUCT.description,
+                images: BASE_PRODUCT.images.slice(0, 8), // Stripe limit
                 metadata: {
-                    cj_product_id: PRODUCT.id,
-                    category: PRODUCT.categoryId,
-                    gender: PRODUCT.gender,
-                    supplier: PRODUCT.supplier
+                    cj_product_id: listId,
+                    category: category,
+                    gender: BASE_PRODUCT.gender,
+                    supplier: BASE_PRODUCT.supplier
                 }
             });
             stripeProductId = sProd.id;
 
             const sPrice = await stripe.prices.create({
                 product: stripeProductId,
-                unit_amount: Math.round(PRODUCT.retailPrice * 100),
+                unit_amount: Math.round(BASE_PRODUCT.retailPrice * 100),
                 currency: 'usd',
             });
             stripePriceId = sPrice.id;
-            console.log(`   💵 Stripe Price Created: $${PRODUCT.retailPrice} (${sPrice.id})`);
+            console.log(`   💵 Stripe Price Created: $${BASE_PRODUCT.retailPrice} (${sPrice.id})`);
         }
 
         // 2. Supabase Upsert
-        // We need to create a "Default" variant since we don't have the full variant list scraped dynamically here
-        // But for a single product add, a Main variant is usually enough to start
         const variant = {
-            id: PRODUCT.id,
-            sku: `QK-${PRODUCT.id}`,
-            price: PRODUCT.retailPrice,
-            image: PRODUCT.images[0],
-            options: { Color: 'Picture Color', Size: 'M' } // Default stub
+            id: listId,
+            sku: `QK-${BASE_PRODUCT.id}-${category.substring(0, 1)}`,
+            price: BASE_PRODUCT.retailPrice,
+            image: BASE_PRODUCT.images[0],
+            options: { Color: 'Black', Size: 'M' } // Default stub
         };
 
         const { error } = await supabase
             .from('products')
             .upsert({
-                cj_product_id: PRODUCT.id, // Using this column for ID
-                name: PRODUCT.name,
-                description: PRODUCT.description,
-                price: PRODUCT.retailPrice,
-                images: PRODUCT.images,
-                cj_sku: `QK-${PRODUCT.id}`,
+                cj_product_id: listId,
+                name: BASE_PRODUCT.name,
+                description: BASE_PRODUCT.description,
+                price: BASE_PRODUCT.retailPrice,
+                images: BASE_PRODUCT.images,
+                cj_sku: `QK-${BASE_PRODUCT.id}`,
                 stripe_product_id: stripeProductId,
                 stripe_price_id: stripePriceId,
-                options: [{ name: 'Size', values: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'] }, { name: 'Color', values: ['Dark Brown', 'Dark Gray', 'Leopard Print', 'Picture Color'] }], // Manual entry from page
-                variants: [variant], // Minimal variant
+                options: BASE_PRODUCT.options,
+                variants: [variant],
                 inventory: 100,
                 is_active: true,
-                category: PRODUCT.categoryId,
-                gender: PRODUCT.gender,
-                supplier: PRODUCT.supplier,
+                category: category,
+                gender: BASE_PRODUCT.gender,
+                supplier: BASE_PRODUCT.supplier,
                 updated_at: new Date().toISOString()
             }, { onConflict: 'cj_product_id' });
 
         if (error) throw error;
-        console.log(`   ✅ Synced to DB!`);
+        console.log(`   ✅ Synced to DB for category ${category}!`);
 
     } catch (error: any) {
-        console.error(`   ❌ Error: ${error.message}`);
+        console.error(`   ❌ Error for ${category}: ${error.message}`);
     }
 }
 
-addProduct().catch(console.error);
+async function main() {
+    for (const cat of TARGET_CATEGORIES) {
+        await addProductForCategory(cat);
+    }
+}
+
+main().catch(console.error);

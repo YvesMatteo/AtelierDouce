@@ -14,10 +14,29 @@ interface HomeProps {
 }
 
 async function getProducts(gender?: string, category?: string, search?: string): Promise<Product[]> {
+  const FEATURED_IDS = [
+    '2ec94e02-4392-4b0f-a105-70c59427b8ce', // Solid Color Premium Bag
+    '9dae65a1-e8c2-454d-b9a7-6032bf7936ee', // Pink Casual Fashion Bag
+    'a4ff2c89-d821-434f-8578-817075daccf8', // Loose Fit Gray Coat
+    'daad8d36-e5fa-4c6a-ba5a-ef01cc92435e', // Classic Short Coat
+  ];
+
   let query = supabase
     .from('products')
     .select('*')
-    .eq('is_active', true)
+    .eq('is_active', true);
+
+  // If we are just loading the main page (no filters), we want to prioritize our featured items
+  // However, Supabase doesn't support custom sorting by array index easily in one query without a stored procedure
+  // So we will just fetch everything (or a reasonable limit) and sort in JS, OR
+  // we can fetch the featured ones separately if needed.
+  // For simplicity and performance on a small catalog, let's stick to the current query
+  // but if no filters are present, we'll manually reorder the results.
+
+  // Actually, to ensure they appear even if created dates change, let's use the default sort
+  // and then post-process if it's the main "New Arrivals" view.
+
+  query = query
     .order('category', { ascending: true })
     .order('created_at', { ascending: false });
 
@@ -40,7 +59,36 @@ async function getProducts(gender?: string, category?: string, search?: string):
     return [];
   }
 
-  return data || [];
+  let products = data || [];
+
+  // If no filters are active (Main Landing Page "New Arrivals"), prioritize the featured items
+  if (!gender && !category && !search) {
+    const featured = [];
+    const others = [];
+
+    // Create a map for fast lookup
+    const productMap = new Map(products.map(p => [p.id, p]));
+
+    // Extract featured items in order
+    for (const id of FEATURED_IDS) {
+      const p = productMap.get(id);
+      if (p) {
+        featured.push(p);
+        productMap.delete(id); // Remove so we don't add it to others
+      }
+    }
+
+    // Add remaining items
+    for (const p of products) {
+      if (!FEATURED_IDS.includes(p.id)) {
+        others.push(p);
+      }
+    }
+
+    products = [...featured, ...others];
+  }
+
+  return products;
 }
 
 export default async function Home(props: HomeProps) {

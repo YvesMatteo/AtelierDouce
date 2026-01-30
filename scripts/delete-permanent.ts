@@ -12,22 +12,21 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2023-10-16' as any,
 });
 
-const TO_DELETE_CJ_IDS = [
-    '1735282529143365632', // Chessboard Plaid Hat
-    '1550458464835743744', // Octagonal Hat
+const TO_DELETE_IDS = [
+    '9c50fa9b-e9ee-4116-8a7c-59f0e2d6f412', // Milky White Mid-Calf Socks
 ];
 
 async function main() {
     console.log('🗑️  Permanently deleting products...');
 
-    for (const cjId of TO_DELETE_CJ_IDS) {
+    for (const id of TO_DELETE_IDS) {
         const { data: products } = await supabase
             .from('products')
             .select('*')
-            .eq('cj_product_id', cjId);
+            .eq('id', id);
 
         if (!products || products.length === 0) {
-            console.log(`Product with CJ ID ${cjId} not found in DB.`);
+            console.log(`Product with ID ${id} not found in DB.`);
             continue;
         }
 
