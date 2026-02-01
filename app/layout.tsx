@@ -6,7 +6,7 @@ import Sidebar from '@/components/Sidebar';
 import CartDrawer from '@/components/CartDrawer';
 import Footer from '@/components/Footer';
 import TikTokPixel from '@/components/TikTokPixel';
-import AnnouncementBar from '@/components/AnnouncementBar';
+// import AnnouncementBar from '@/components/AnnouncementBar';
 
 const ovo = Ovo({
   weight: '400',
@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="en" className={`${ovo.variable} ${nunitoSans.variable}`}>
       <body className="font-sans antialiased text-[#171717] bg-white">
         <Providers>
-          <AnnouncementBar />
+          {/* <AnnouncementBar /> */}
           <Sidebar />
           <CartDrawer />
           <div className="flex flex-col min-h-screen">
