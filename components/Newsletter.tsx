@@ -47,6 +47,9 @@ export default function Newsletter() {
                         <p className="text-sm opacity-80">
                             We've sent a confirmation link to your inbox. Please click it to verify your email and receive your discount code.
                         </p>
+                        <p className="text-xs text-white/60 mt-4 italic">
+                            (If you don't see it, please check your spam folder)
+                        </p>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">

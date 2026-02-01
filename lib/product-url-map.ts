@@ -138,5 +138,30 @@ export const PRODUCT_URL_MAP: Record<string, { name: string, cj?: string, qk?: s
         "name": "Diamond Tag",
         "cj": "https://cjdropshipping.com/product-detail.html?id=516732AB-1D5F-49F7-BE3F-17BD08B6945A",
         "qk": "https://qksource.com/product/small-star-studded-diamond-tag-p-516732AB-1D5F-49F7-BE3F-17BD08B6945A.html"
+    },
+    // Missing Products Added 2026-02-01
+    "B4158AAB-B1EE-431B-A468-D1BA8085452B-TOP": {
+        "name": "Winter Outdoor Body Hoodie Ski Suit",
+        "cj": "https://cjdropshipping.com/product-detail.html?id=B4158AAB-B1EE-431B-A468-D1BA8085452B-TOP"
+    },
+    "2510040808101612300-tops": {
+        "name": "Professional Double-board Waterproof Ski Suit",
+        "cj": "https://cjdropshipping.com/product-detail.html?id=2510040808101612300-tops",
+        "qk": "https://qksource.com/product/womens-new-professional-double-board-waterproof-ski-suit-p-2510040808101612300.html"
+    },
+    "2512230236071631600": {
+        "name": "Luxe Fox Fur Ear Warmers",
+        "cj": "https://cjdropshipping.com/product-detail.html?id=2512230236071631600",
+        "qk": "https://qksource.com/product/luxe-fox-fur-ear-warmers-p-2512230236071631600.html"
+    },
+    "1745817525838946304": {
+        "name": "Winter Ski Suit - Warm Waterproof Fashion",
+        "cj": "https://cjdropshipping.com/product-detail.html?id=1745817525838946304",
+        "qk": "https://qksource.com/product/winter-ski-suit-warm-waterproof-fashion-p-1745817525838946304.html"
+    },
+    "996BA858-DC7C-4405-9A62-9BF17218E6BE": {
+        "name": "Brushed Fleece Leggings",
+        "cj": "https://cjdropshipping.com/product-detail.html?id=996BA858-DC7C-4405-9A62-9BF17218E6BE",
+        "qk": "https://qksource.com/product/thin-brushed-leggings-p-996BA858-DC7C-4405-9A62-9BF17218E6BE.html"
     }
 };
