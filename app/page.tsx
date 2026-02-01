@@ -61,8 +61,8 @@ async function getProducts(gender?: string, category?: string, search?: string):
 
   let products = data || [];
 
-  // If no filters are active (Main Landing Page "New Arrivals"), prioritize the featured items
-  if (!gender && !category && !search) {
+  // If no filters are active (Main Landing Page "New Arrivals") or "Shop All" is selected, prioritize the featured items
+  if (!gender && (!category || category === 'All') && !search) {
     const featured = [];
     const others = [];
 
@@ -141,7 +141,7 @@ export default async function Home(props: HomeProps) {
 
       {/* Introduction */}
       {!category && (
-        <section className="py-24 px-6 md:px-12 max-w-3xl mx-auto text-center">
+        <section className="py-12 px-6 md:px-12 max-w-3xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-serif text-gray-900 mb-6 relative z-10">
             The Art of Bourgeois
           </h1>

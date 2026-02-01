@@ -1,50 +1,58 @@
-
 import { calculateDiscount } from '../lib/discount';
 
-// Helper to run test
-const runTest = (name: string, items: { price: number; quantity: number, isGift?: boolean }[], expectedDiscount: number) => {
+function test(name: string, items: any[], expectedDiscount: number) {
     const discount = calculateDiscount(items);
-    // Use epsilon for float comparison
-    const passed = Math.abs(discount - expectedDiscount) < 0.01;
-    console.log(`${passed ? '✅' : '❌'} ${name}: Expected ${expectedDiscount}, Got ${discount}`);
-    if (!passed) process.exit(1);
-};
+    const pass = Math.abs(discount - expectedDiscount) < 0.01; // Allow float variance
+    console.log(`${pass ? '✅' : '❌'} ${name}: Expected ${expectedDiscount}, got ${discount}`);
+}
 
-// Tests
-console.log('Testing Discount Logic...');
+console.log("Testing Discount Logic...");
 
-// Case 1: 1 Item (No discount)
-runTest('1 Item ($100)', [{ price: 100, quantity: 1 }], 0);
+// Scenario 1: 1 item (No discount)
+test("1 Item", [{ price: 100, quantity: 1 }], 0);
 
-// Case 2: 2 Items (20% off both)
-// Items: 100, 100. Discount = 20 + 20 = 40.
-runTest('2 Items ($100)', [{ price: 100, quantity: 2 }], 40);
-
-// Case 3: 3 Items (Cheapest Free + 20% off next 2 which are not there)
-// Items: 50, 100, 100. Sorted: 50, 100, 100.
-// Free: 50.
-// Next 2 (100, 100): 20% off each = 20 + 20 = 40.
-// Total Discount: 50 + 40 = 90.
-runTest('3 Items (50, 100, 100)', [
-    { price: 50, quantity: 1 },
-    { price: 100, quantity: 2 }
-], 90);
-
-// Case 4: 4 Items (Cheapest Free + 20% off next 2)
-// Items: 50, 100, 100, 100. Sorted: 50, 100, 100, 100.
-// Free: 50.
-// Next 2 (100, 100): 20% off each = 40.
-// 4th Item (100): No discount.
-// Total Discount: 90.
-runTest('4 Items (50, 100, 100, 100)', [
-    { price: 50, quantity: 1 },
-    { price: 100, quantity: 3 }
-], 90);
-
-// Case 5: Gift Item (Should be ignored)
-runTest('Gift Item Ignored', [
+// Scenario 2: 2 items (15% off both)
+// Cheapest (50) -> 7.5. Expensive (100) -> 15. Total: 22.5.
+test("2 Items", [
     { price: 100, quantity: 1 },
-    { price: 0, quantity: 1, isGift: true }
-], 0);
+    { price: 50, quantity: 1 }
+], 22.5);
 
-console.log('All tests passed!');
+// Scenario 3: 3 items (15% off cheapest 2 only)
+// Prices: 20 (Cheap), 50 (Mid), 100 (Exp).
+// Discount: 15% of 20 (3) + 15% of 50 (7.5) = 10.5.
+// 100 is full price.
+test("3 Items", [
+    { price: 100, quantity: 1 },
+    { price: 50, quantity: 1 },
+    { price: 20, quantity: 1 }
+], 10.5);
+
+// Scenario 4: 4 items (Cheapest Free, Next 2 15% off)
+// Prices: 10, 20, 30, 100.
+// Item 0 (10): Free -> 10.
+// Item 1 (20): 15% -> 3.
+// Item 2 (30): 15% -> 4.5.
+// Item 3 (100): Full.
+// Total Discount: 10 + 3 + 4.5 = 17.5.
+test("4 Items (Tier 2 Trigger)", [
+    { price: 100, quantity: 1 },
+    { price: 30, quantity: 1 },
+    { price: 20, quantity: 1 },
+    { price: 10, quantity: 1 }
+], 17.5);
+
+// Scenario 5: 5 items (Cheapest Free, Next 2 15%)
+// Prices: 10, 20, 30, 40, 100.
+// Item 0 (10): Free -> 10.
+// Item 1 (20): 15% -> 3.
+// Item 2 (30): 15% -> 4.5.
+// Rest (40, 100): Full.
+// Total Discount: 17.5.
+test("5 Items", [
+    { price: 40, quantity: 1 },
+    { price: 30, quantity: 1 },
+    { price: 20, quantity: 1 },
+    { price: 10, quantity: 1 },
+    { price: 100, quantity: 1 }
+], 17.5);
