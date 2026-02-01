@@ -34,11 +34,11 @@ export default function Newsletter() {
     };
 
     return (
-        <section id="newsletter" className="py-24 bg-[#faf2e6] scroll-mt-24">
-            <div className="max-w-xl mx-auto px-6 text-center">
-                <h2 className="text-2xl font-serif mb-4">Join Our Community</h2>
-                <p className="text-[#5e5e5e] text-sm mb-8 leading-relaxed">
-                    Subscribe to receive updates, access to exclusive deals, and more.
+        <section id="newsletter" className="py-32 bg-[#faf2e6] scroll-mt-24">
+            <div className="max-w-2xl mx-auto px-6 text-center">
+                <h2 className="text-3xl font-serif mb-6">Join Our Community</h2>
+                <p className="text-[#5e5e5e] text-lg mb-10 leading-relaxed">
+                    Sign up for our newsletter and get a <span className="font-semibold text-[#a48354]">$5 gift card</span>.
                 </p>
 
                 {status === 'success' ? (

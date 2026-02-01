@@ -13,6 +13,11 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
         }
 
+        if (!process.env.RESEND_API_KEY) {
+            console.error('❌ RESEND_API_KEY is missing');
+            return NextResponse.json({ error: 'Server misconfiguration: Missing email key' }, { status: 500 });
+        }
+
         // generate a simple token
         const token = crypto.randomUUID();
 

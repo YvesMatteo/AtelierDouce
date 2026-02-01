@@ -8,6 +8,7 @@ import ProductCarousel from '@/components/ProductCarousel';
 import ProductGrid from '@/components/ProductGrid';
 
 import Newsletter from '@/components/Newsletter';
+import StickyNewsletter from '@/components/StickyNewsletter';
 // ... imports
 
 interface HomeProps {
@@ -183,6 +184,7 @@ export default async function Home(props: HomeProps) {
 
       {/* Newsletter */}
       <Newsletter />
+      <StickyNewsletter />
 
     </main>
   );
