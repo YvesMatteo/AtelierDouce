@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/currency';
 
 interface NewsletterProps {
@@ -8,7 +8,7 @@ interface NewsletterProps {
     code?: string;
 }
 
-export default function Newsletter({ rate = 1, code = 'USD' }: NewsletterProps) {
+const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
@@ -83,4 +83,6 @@ export default function Newsletter({ rate = 1, code = 'USD' }: NewsletterProps) 
             </div>
         </section>
     );
-}
+};
+
+export default Newsletter;

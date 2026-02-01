@@ -49,10 +49,12 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Failed to subscribe' }, { status: 500 });
         }
 
+        console.log(`Sending email to ${email} with token ${token}`);
+
         // Send Verification Email
         const verifyLink = `https://www.atelierdouce.shop/api/subscribe/verify?token=${token}`;
 
-        await resend.emails.send({
+        const data = await resend.emails.send({
             from: FROM_EMAIL,
             to: email,
             subject: 'Please verify your subscription - Atelier Douce',
@@ -73,6 +75,13 @@ export async function POST(request: Request) {
                         `
             })
         });
+
+        console.log('Resend response:', data);
+
+        if (data.error) {
+            console.error('Resend API Error Data:', data.error);
+            throw new Error('Failed to send email');
+        }
 
         return NextResponse.json({ success: true });
 

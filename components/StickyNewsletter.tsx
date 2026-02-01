@@ -81,8 +81,9 @@ export default function StickyNewsletter({ rate = 1, code = 'USD' }: StickyNewsl
                 </div>
 
                 {status === 'success' ? (
-                    <div className="bg-[#171717] text-white px-8 py-3 rounded text-sm font-medium animate-fade-in">
-                        Check your inbox! 💌
+                    <div className="bg-[#171717] text-white px-8 py-3 rounded text-sm font-medium animate-fade-in flex flex-col items-start gap-1">
+                        <span>Check your inbox! 💌</span>
+                        <span className="text-[10px] opacity-75 italic">(Check spam if missing)</span>
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="flex w-full md:w-auto gap-2">
