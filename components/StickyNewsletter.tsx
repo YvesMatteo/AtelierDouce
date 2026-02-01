@@ -3,7 +3,14 @@
 import { useState, useEffect } from 'react';
 import { X, Mail } from 'lucide-react';
 
-export default function StickyNewsletter() {
+import { formatPrice } from '@/lib/currency';
+
+interface StickyNewsletterProps {
+    rate?: number;
+    code?: string;
+}
+
+export default function StickyNewsletter({ rate = 1, code = 'USD' }: StickyNewsletterProps) {
     const [isVisible, setIsVisible] = useState(false);
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
@@ -68,7 +75,7 @@ export default function StickyNewsletter() {
                     <div>
                         <h3 className="font-serif text-xl text-[#171717]">Join Our Community</h3>
                         <p className="text-sm text-[#5e5e5e] mt-1">
-                            Sign up for our newsletter and get a <span className="font-semibold text-[#a48354]">$5 gift card</span>.
+                            Sign up for our newsletter and get <span className="font-semibold text-[#a48354]">{formatPrice(5 * rate, code)} OFF</span> your first order.
                         </p>
                     </div>
                 </div>

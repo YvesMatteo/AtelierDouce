@@ -6,6 +6,11 @@ import { renderEmailLayout } from '@/lib/email-templates';
 // Initialize inside handler to avoid build-time errors
 
 export async function POST(request: Request) {
+    if (!process.env.RESEND_API_KEY) {
+        console.error('RESEND_API_KEY is missing');
+        return NextResponse.json({ error: 'Internal Server Configuration Error' }, { status: 500 });
+    }
+
     try {
         const { email } = await request.json();
 

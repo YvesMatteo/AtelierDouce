@@ -183,8 +183,8 @@ export default async function Home(props: HomeProps) {
       </section>
 
       {/* Newsletter */}
-      <Newsletter />
-      <StickyNewsletter />
+      <Newsletter rate={rate} code={code} />
+      <StickyNewsletter rate={rate} code={code} />
 
     </main>
   );

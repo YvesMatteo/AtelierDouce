@@ -46,13 +46,18 @@ export default function BuyButton({ productId, productName, price, currency, ima
         setLoading(false);
     };
 
+    const formattedPrice = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency,
+    }).format(price);
+
     return (
         <button
             onClick={handleAddToCart}
             disabled={loading || disabled}
             className="w-full bg-[#232323] text-white py-4 px-8 text-[13px] font-bold uppercase tracking-[0.15em] border border-[#232323] hover:bg-white hover:text-[#232323] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
         >
-            {loading ? 'Adding...' : `Add to Cart — $${price.toFixed(2)}`}
+            {loading ? 'Adding...' : `Add to Cart — ${formattedPrice}`}
         </button>
     );
 }

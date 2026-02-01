@@ -38,7 +38,7 @@ export default function Newsletter() {
             <div className="max-w-2xl mx-auto px-6 text-center">
                 <h2 className="text-3xl font-serif mb-6">Join Our Community</h2>
                 <p className="text-[#5e5e5e] text-lg mb-10 leading-relaxed">
-                    Sign up for our newsletter and get a <span className="font-semibold text-[#a48354]">$5 gift card</span>.
+                    Sign up for our newsletter and get a <span className="font-semibold text-[#a48354]">{formatPrice(5 * rate, code)} gift card</span>.
                 </p>
 
                 {status === 'success' ? (
