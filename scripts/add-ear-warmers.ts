@@ -5,7 +5,12 @@ import Stripe from 'stripe';
 import fs from 'fs';
 
 // Read extracted images
-const IMAGES = JSON.parse(fs.readFileSync('images.json', 'utf-8'));
+const IMAGES = [
+    '/product-images/luxe-ear-warmers/01-light-brown.png',
+    '/product-images/luxe-ear-warmers/02.png',
+    '/product-images/luxe-ear-warmers/03.png',
+    '/product-images/luxe-ear-warmers/04.png'
+];
 
 // Product Data
 const PRODUCT = {
