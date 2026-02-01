@@ -25,4 +25,4 @@ async function listImages(name: string) {
     });
 }
 
-listImages("Timeless Camel Wool Coat");
+listImages("Solid Color Versatile Winter Warm Extended Tassel Scarf");
