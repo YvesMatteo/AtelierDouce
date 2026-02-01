@@ -25,6 +25,7 @@ export default function CartDrawer() {
         addToCart,
     } = useCart();
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [email, setEmail] = useState('');
     const { trackInitiateCheckout } = useTikTokPixel();
 
     const currencyCode = cartItems.length > 0 && cartItems[0].currency ? cartItems[0].currency : 'USD';
@@ -39,6 +40,12 @@ export default function CartDrawer() {
     const handleCheckout = async () => {
         setIsCheckingOut(true);
 
+        if (!email || !email.includes('@')) {
+            alert('Please enter a valid email address to continue.');
+            setIsCheckingOut(false);
+            return;
+        }
+
         // Track InitiateCheckout
         cartItems.forEach(item => {
             trackInitiateCheckout({
@@ -50,6 +57,23 @@ export default function CartDrawer() {
         });
 
         try {
+            // Save abandonment state first
+            await fetch('/api/abandonment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email,
+                    cartItems: cartItems.map(item => ({
+                        productId: item.productId,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        selectedOptions: item.selectedOptions,
+                        image: item.image
+                    }))
+                })
+            });
+
             const response = await fetch('/api/checkout', {
                 method: 'POST',
                 headers: {
@@ -289,9 +313,26 @@ export default function CartDrawer() {
                                 <span>{currencySymbol}{cartTotal.toFixed(0)}</span>
                             </div>
                         </div>
-                        <p className="text-xs text-gray-500 mb-6 text-center">
+                        <p className="text-xs text-gray-500 mb-4 text-center">
                             Shipping and taxes calculated at checkout.
                         </p>
+
+                        {/* Email Capture for Abandonment */}
+                        <div className="mb-4">
+                            <label htmlFor="checkout-email" className="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1.5 px-1">
+                                Email Address
+                            </label>
+                            <input
+                                id="checkout-email"
+                                type="email"
+                                required
+                                placeholder="Enter your email to proceed"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full bg-white border border-gray-200 py-3 px-4 text-sm focus:outline-none focus:border-black transition-colors"
+                            />
+                        </div>
+
                         <button
                             onClick={handleCheckout}
                             disabled={isCheckingOut}

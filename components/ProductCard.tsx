@@ -15,6 +15,9 @@ export default function ProductCard({ product, rate, code }: ProductCardProps) {
     const price = calculatePrice(product.price, rate);
     const formattedPrice = formatPrice(price, code);
 
+    const compareAtPrice = product.compare_at_price ? calculatePrice(product.compare_at_price, rate) : null;
+    const formattedCompareAtPrice = compareAtPrice ? formatPrice(compareAtPrice, code) : null;
+
     return (
         <Link href={`/product/${product.id}`} className="group cursor-pointer block h-full">
             <div className="relative aspect-[3/4] overflow-hidden bg-[#f5f5f5] mb-6 p-3">
@@ -34,9 +37,16 @@ export default function ProductCard({ product, rate, code }: ProductCardProps) {
                 <h3 className="text-[15px] font-serif text-[#171717] group-hover:text-[#a48354] transition-colors duration-300">
                     {product.name}
                 </h3>
-                <p className="text-[13px] text-[#5e5e5e] font-sans">
-                    {formattedPrice}
-                </p>
+                <div className="flex items-center justify-center gap-2">
+                    {formattedCompareAtPrice && (
+                        <p className="text-[13px] text-[#999] font-sans line-through">
+                            {formattedCompareAtPrice}
+                        </p>
+                    )}
+                    <p className="text-[13px] text-[#5e5e5e] font-sans font-medium">
+                        {formattedPrice}
+                    </p>
+                </div>
             </div>
         </Link>
     );

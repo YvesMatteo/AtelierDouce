@@ -31,33 +31,49 @@ const NAME_MAPPING: Record<string, string> = {
     // Ski suits and others not in CSV will be skipped
 };
 
+interface CSVData {
+    price?: number;
+    compareAtPrice?: number;
+}
+
 async function updateProducts() {
     const isPreview = process.argv.includes('--preview');
     console.log(`🚀 Starting product update ${isPreview ? '(PREVIEW MODE)' : ''}...`);
 
     // 1. Read CSV
+    if (!fs.existsSync(CSV_PATH)) {
+        console.error(`CSV file not found at ${CSV_PATH}`);
+        return;
+    }
     const csvContent = fs.readFileSync(CSV_PATH, 'utf-8');
     const lines = csvContent.split('\n').filter(l => l.trim());
-    const csvProducts: Record<string, number> = {};
+    const csvProducts: Record<string, CSVData> = {};
 
     lines.slice(1).forEach(line => {
-        // Simple CSV parse handling comma inside quotes if needed, but for now simple split might suffice if no commas in names
-        // Better: use a regex to split by comma ignoring commas in quotes/parentheses
         const parts = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
 
         let name = parts[2]?.trim();
         let priceStr = parts[4]?.trim();
+        let compareAtStr = parts[5]?.trim();
 
-        if (name && priceStr) {
-            // Remove quotes if present
+        if (name && (priceStr || compareAtStr)) {
             name = name.replace(/^"|"$/g, '');
-            // Handle price range or simple price. If range, take the lowest? Or the provided "Sell" price usually is single.
-            // In the CSV: "51.82" -> "129". "6.22 – 11.44" -> "29".
-            // It seems "Sell" is always a single number in the example.
+
             const price = parseFloat(priceStr);
-            if (!isNaN(price)) {
-                csvProducts[name] = price;
+
+            // Extract number from "179 (28%)" or "34 (29%)"
+            let compareAtPrice = undefined;
+            if (compareAtStr) {
+                const match = compareAtStr.match(/(\d+(\.\d+)?)/);
+                if (match) {
+                    compareAtPrice = parseFloat(match[1]);
+                }
             }
+
+            csvProducts[name] = {
+                price: !isNaN(price) ? price : undefined,
+                compareAtPrice
+            };
         }
     });
 
@@ -80,56 +96,56 @@ async function updateProducts() {
         let csvName = p.name;
 
         // Try exact match
-        let newPrice = csvProducts[p.name];
+        let csvData = csvProducts[p.name];
 
         // Try mapping
-        if (newPrice === undefined) {
-            // Check if we have a manual mapping
+        if (!csvData) {
             const mappedName = NAME_MAPPING[p.name];
             if (mappedName && csvProducts[mappedName]) {
                 csvName = mappedName;
-                newPrice = csvProducts[mappedName];
+                csvData = csvProducts[mappedName];
             }
         }
 
-        // Try fuzzy / partial match if needed (e.g. normalize spaces)
-        if (newPrice === undefined) {
+        // Try fuzzy / partial match
+        if (!csvData) {
             const normalizedDB = p.name.toLowerCase().trim();
             const foundKey = Object.keys(csvProducts).find(k => k.toLowerCase().trim() === normalizedDB);
             if (foundKey) {
                 csvName = foundKey;
-                newPrice = csvProducts[foundKey];
+                csvData = csvProducts[foundKey];
             }
         }
 
-        if (newPrice !== undefined) {
-            const priceDiff = newPrice !== p.price;
-            if (priceDiff || p.name !== csvName) {
+        if (csvData) {
+            const { price: newPrice, compareAtPrice: newCompareAtPrice } = csvData;
+            const priceDiff = newPrice !== undefined && newPrice !== p.price;
+            const compareAtDiff = newCompareAtPrice !== undefined && newCompareAtPrice !== p.compare_at_price;
+
+            if (priceDiff || compareAtDiff || p.name !== csvName) {
                 console.log(`\nMATCH: "${p.name}" -> CSV: "${csvName}"`);
-                console.log(`  Current Price: ${p.price} -> New Price: ${newPrice}`);
+                if (priceDiff) console.log(`  Price: ${p.price} -> ${newPrice}`);
+                if (compareAtDiff) console.log(`  CompareAt: ${p.compare_at_price} -> ${newCompareAtPrice}`);
 
                 if (!isPreview) {
-                    // Update main record
+                    const updateData: any = { name: csvName };
+                    if (newPrice !== undefined) updateData.price = newPrice;
+                    if (newCompareAtPrice !== undefined) updateData.compare_at_price = newCompareAtPrice;
+
                     const { data: updatedData, error: updateError } = await supabase
                         .from('products')
-                        .update({
-                            price: newPrice,
-                            // Optionally update name to match CSV exactly? User asked to "fix names" too.
-                            name: csvName
-                        })
+                        .update(updateData)
                         .eq('id', p.id)
                         .select();
 
                     if (updateError) {
                         console.error(`  ❌ Error updating product ${p.id}:`, updateError.message);
                     } else if (updatedData && updatedData.length > 0) {
-                        console.log(`  ✅ Updated product record: ${updatedData[0].name} - ${updatedData[0].price}`);
-                    } else {
-                        console.log(`  ⚠️ Update executed but no rows returned (RLS or no change?).`);
+                        console.log(`  ✅ Updated product record: ${updatedData[0].name} - ${updatedData[0].price} (CompareAt: ${updatedData[0].compare_at_price})`);
                     }
 
                     // Update variants
-                    if (p.variants && Array.isArray(p.variants)) {
+                    if (p.variants && Array.isArray(p.variants) && newPrice !== undefined) {
                         const updatedVariants = p.variants.map((v: any) => ({
                             ...v,
                             price: newPrice
@@ -147,11 +163,7 @@ async function updateProducts() {
                         }
                     }
                 }
-            } else {
-                console.log(`OK: "${p.name}" matches.`);
             }
-        } else {
-            console.log(`⚠️ NO MATCH FOUND for DB Product: "${p.name}"`);
         }
     }
 }

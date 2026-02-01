@@ -152,6 +152,14 @@ export async function POST(request: Request) {
                 supplier: ci.supplier
             })));
 
+            // Mark abandoned checkout as recovered
+            if (session.customer_details?.email) {
+                await supabase
+                    .from('abandoned_checkouts')
+                    .update({ status: 'recovered', updated_at: new Date().toISOString() })
+                    .eq('email', session.customer_details.email);
+            }
+
         } catch (error) {
             console.error('Error processing order:', error);
             // Still return 200 to prevent Stripe retries, but log the error

@@ -16,6 +16,7 @@ export interface Product {
     is_active?: boolean;
     created_at?: string;
     updated_at?: string;
+    compare_at_price?: number;
     variants?: {
         id: string; // cj_variant_id
         sku?: string;
