@@ -36,7 +36,7 @@ export default function DiscountProgress({ count }: DiscountProgressProps) {
                 {message}
             </h3>
 
-            <div className="relative h-3 bg-[#FFF8DC] rounded-full mx-2 mb-10 w-[95%] mx-auto">
+            <div className="relative h-3 bg-[#FFF8DC] rounded-full mx-2 mb-16 w-[95%] mx-auto">
                 {/* Progress Fill */}
                 <div
                     className="absolute left-0 top-0 h-full bg-[#D4AF37] rounded-full transition-all duration-500 ease-out"
@@ -48,10 +48,10 @@ export default function DiscountProgress({ count }: DiscountProgressProps) {
                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-[#FFF8DC] z-10 transition-colors duration-300 ${count >= 2 ? 'border-[#D4AF37] text-[#D4AF37]' : 'border-[#e5e5e5] text-gray-300'}`}>
                         <Tag className="w-4 h-4 rotate-90" />
                     </div>
-                    <div className="absolute top-10 w-24 text-center text-[10px] font-bold text-[#171717]">
-                        15% OFF
+                    <div className="absolute top-9 flex flex-col items-center w-24">
+                        <span className="text-[10px] font-bold text-[#171717] leading-tight mb-0.5">15% OFF</span>
+                        <span className="text-[9px] text-gray-400 font-medium leading-tight">Buy 2</span>
                     </div>
-                    <div className="absolute -bottom-6 text-[10px] text-gray-400 font-medium">Buy 2</div>
                 </div>
 
                 {/* Tier 2 Marker (Buy 4) - 75% position */}
@@ -59,10 +59,10 @@ export default function DiscountProgress({ count }: DiscountProgressProps) {
                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-[#FFF8DC] z-10 transition-colors duration-300 ${count >= 4 ? 'border-[#D4AF37] text-[#D4AF37]' : 'border-[#e5e5e5] text-gray-300'}`}>
                         <ShoppingBag className="w-4 h-4" />
                     </div>
-                    <div className="absolute top-10 w-24 text-center text-[10px] font-bold text-[#171717]">
-                        1 FREE ITEM
+                    <div className="absolute top-9 flex flex-col items-center w-24">
+                        <span className="text-[10px] font-bold text-[#171717] leading-tight mb-0.5">1 FREE ITEM</span>
+                        <span className="text-[9px] text-gray-400 font-medium leading-tight">Buy 4</span>
                     </div>
-                    <div className="absolute -bottom-6 text-[10px] text-gray-400 font-medium">Buy 4</div>
                 </div>
 
                 {/* Tier 3 Marker (Buy 5) - 100% position */}
@@ -70,10 +70,10 @@ export default function DiscountProgress({ count }: DiscountProgressProps) {
                     <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center bg-[#FFF8DC] z-10 transition-colors duration-300 ${count >= 5 ? 'border-[#D4AF37] text-[#D4AF37]' : 'border-[#e5e5e5] text-gray-300'}`}>
                         <Gift className="w-4 h-4" />
                     </div>
-                    <div className="absolute top-10 w-20 text-center text-[10px] font-bold text-[#171717]">
-                        FREE GIFT
+                    <div className="absolute top-9 flex flex-col items-center w-20">
+                        <span className="text-[10px] font-bold text-[#171717] leading-tight mb-0.5">FREE GIFT</span>
+                        <span className="text-[9px] text-gray-400 font-medium leading-tight">Buy 5</span>
                     </div>
-                    <div className="absolute -bottom-6 text-[10px] text-gray-400 font-medium">Buy 5</div>
                 </div>
             </div>
         </div>
