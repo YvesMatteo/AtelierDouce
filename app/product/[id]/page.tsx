@@ -6,12 +6,47 @@ import Link from 'next/link';
 import { Product } from '@/lib/types';
 import { headers } from 'next/headers';
 import { getCurrencyForCountry, calculatePrice, formatPrice, BASE_PRICE_USD } from '@/lib/currency';
+import type { Metadata } from 'next';
 
 interface PageProps {
     params: Promise<{
         id: string;
     }>;
 }
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { id } = await params;
+    const { data: product } = await supabase
+        .from('products')
+        .select('name, description, images')
+        .eq('id', id)
+        .single();
+
+    if (!product) {
+        return { title: 'Product Not Found | Atelier Douce' };
+    }
+
+    const productImage = product.images?.[0] || 'https://atelierdouce.shop/og-image.jpg';
+    const imageUrl = productImage.startsWith('http') ? productImage : `https://atelierdouce.shop${productImage}`;
+
+    return {
+        title: `${product.name} | Atelier Douce`,
+        description: product.description?.substring(0, 160) || 'Premium comfort and luxury from Atelier Douce.',
+        openGraph: {
+            title: `${product.name} | Atelier Douce`,
+            description: product.description?.substring(0, 160) || 'Premium comfort and luxury from Atelier Douce.',
+            images: [{ url: imageUrl, width: 1200, height: 630, alt: product.name }],
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `${product.name} | Atelier Douce`,
+            description: product.description?.substring(0, 100) || 'Premium comfort and luxury.',
+            images: [imageUrl],
+        },
+    };
+}
+
 
 // Re-export this to ensure static params are generated correctly if you were using SSG, 
 // strictly for now we are using dynamic rendering.

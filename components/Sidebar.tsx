@@ -2,15 +2,14 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Menu, X, ShoppingBag, Search } from 'lucide-react';
+import { Menu, X, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
-import SearchModal from './SearchModal';
+import SearchBar from './SearchBar';
 
 
 
 export default function Sidebar() {
     const [isOpen, setIsOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const { toggleCart, cartCount } = useCart();
 
     const reset = () => {
@@ -38,14 +37,8 @@ export default function Sidebar() {
                     >
                         <Menu className="w-5 h-5" />
                     </button>
-                    {/* ... Search button ... */}
-                    <button
-                        onClick={() => setIsSearchOpen(true)}
-                        className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                        aria-label="Search"
-                    >
-                        <Search className="w-5 h-5" />
-                    </button>
+                    {/* Search Bar */}
+                    <SearchBar />
                 </div>
 
                 <Link href="/" className="absolute left-1/2 -translate-x-1/2 text-xl font-serif tracking-widest uppercase hover:text-[#a48354] transition-colors">
@@ -67,9 +60,6 @@ export default function Sidebar() {
                     </button>
                 </div>
             </header>
-
-            {/* Search Modal */}
-            <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
             {/* Sidebar Overlay */}
             {isOpen && (
@@ -124,3 +114,4 @@ export default function Sidebar() {
         </>
     );
 }
+

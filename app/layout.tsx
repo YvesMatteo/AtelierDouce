@@ -6,6 +6,7 @@ import Sidebar from '@/components/Sidebar';
 import CartDrawer from '@/components/CartDrawer';
 import Footer from '@/components/Footer';
 import TikTokPixel from '@/components/TikTokPixel';
+import CookieConsent from '@/components/CookieConsent';
 // import AnnouncementBar from '@/components/AnnouncementBar';
 
 const ovo = Ovo({
@@ -24,7 +25,29 @@ const nunitoSans = Nunito_Sans({
 export const metadata: Metadata = {
   title: 'Atelier Douce | Premium Comfort',
   description: 'Premium winter wear, accessories, and home footwear. Discover luxury and comfort with Atelier Douce.',
-
+  openGraph: {
+    title: 'Atelier Douce | Premium Comfort',
+    description: 'Premium winter wear, accessories, and home footwear. Discover luxury and comfort with Atelier Douce.',
+    url: 'https://atelierdouce.shop',
+    siteName: 'Atelier Douce',
+    images: [
+      {
+        url: 'https://atelierdouce.shop/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Atelier Douce - Premium Comfort',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Atelier Douce | Premium Comfort',
+    description: 'Premium winter wear, accessories, and home footwear.',
+    images: ['https://atelierdouce.shop/og-image.jpg'],
+  },
+  metadataBase: new URL('https://atelierdouce.shop'),
 };
 
 export default function RootLayout({
@@ -47,7 +70,9 @@ export default function RootLayout({
           </div>
         </Providers>
         <TikTokPixel />
+        <CookieConsent />
       </body>
     </html>
   );
 }
+
