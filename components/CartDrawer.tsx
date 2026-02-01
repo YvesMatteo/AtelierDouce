@@ -40,11 +40,7 @@ export default function CartDrawer() {
     const handleCheckout = async () => {
         setIsCheckingOut(true);
 
-        if (!email || !email.includes('@')) {
-            alert('Please enter a valid email address to continue.');
-            setIsCheckingOut(false);
-            return;
-        }
+
 
         // Track InitiateCheckout
         try {
@@ -61,22 +57,32 @@ export default function CartDrawer() {
         }
 
         try {
-            // Save abandonment state first
-            await fetch('/api/abandonment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email,
-                    cartItems: cartItems.map(item => ({
-                        productId: item.productId,
-                        name: item.name,
-                        price: item.price,
-                        quantity: item.quantity,
-                        selectedOptions: item.selectedOptions,
-                        image: item.image
-                    }))
-                })
-            });
+            // If email is provided, save abandonment state and subscribe to newsletter
+            // We use Promise.allSettled to ensure checkout proceeds even if these fail
+            if (email && email.includes('@')) {
+                await Promise.allSettled([
+                    fetch('/api/abandonment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email,
+                            cartItems: cartItems.map(item => ({
+                                productId: item.productId,
+                                name: item.name,
+                                price: item.price,
+                                quantity: item.quantity,
+                                selectedOptions: item.selectedOptions,
+                                image: item.image
+                            }))
+                        })
+                    }),
+                    fetch('/api/subscribe', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email })
+                    })
+                ]);
+            }
 
             const response = await fetch('/api/checkout', {
                 method: 'POST',
@@ -321,16 +327,15 @@ export default function CartDrawer() {
                             Shipping and taxes calculated at checkout.
                         </p>
 
-                        {/* Email Capture for Abandonment */}
+                        {/* Email Capture for Newsletter & Abandonment */}
                         <div className="mb-4">
                             <label htmlFor="checkout-email" className="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-1.5 px-1">
-                                Email Address
+                                Join our newsletter (Optional)
                             </label>
                             <input
                                 id="checkout-email"
                                 type="email"
-                                required
-                                placeholder="Enter your email to proceed"
+                                placeholder="Enter your email for exclusive offers"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="w-full bg-white border border-gray-200 py-3 px-4 text-base focus:outline-none focus:border-black transition-colors"
