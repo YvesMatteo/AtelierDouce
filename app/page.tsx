@@ -200,49 +200,6 @@ export default async function Home(props: HomeProps) {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#211e1e] text-[#897a64] py-16 px-6 md:px-12 text-sm font-sans">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="space-y-6">
-            <h3 className="font-serif text-[#dfe3e8] text-lg uppercase tracking-widest">Atelier Douce</h3>
-            <p className="leading-relaxed text-xs">
-              Premium home essentials focused on quality, minimalism, and timeless style.
-            </p>
-          </div>
-
-          <div>
-            <h4 className="text-[#dfe3e8] uppercase tracking-widest text-xs font-bold mb-6">Shop</h4>
-            <ul className="space-y-4 text-xs">
-              <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
-              <li><Link href="/?sort=new" className="hover:text-white transition-colors">New Arrivals</Link></li>
-              <li><Link href="/?category=Accessories" className="hover:text-white transition-colors">Accessories</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-[#dfe3e8] uppercase tracking-widest text-xs font-bold mb-6">Customer Care</h4>
-            <ul className="space-y-4 text-xs">
-              <li><Link href="#" className="hover:text-white transition-colors">Shipping & Returns</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Contact Us</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Terms & Conditions</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-[#dfe3e8] uppercase tracking-widest text-xs font-bold mb-6">Payments</h4>
-            <div className="flex gap-2 grayscale opacity-50">
-              {/* Payment icons placeholders */}
-              <div className="w-10 h-6 bg-white rounded"></div>
-              <div className="w-10 h-6 bg-white rounded"></div>
-              <div className="w-10 h-6 bg-white rounded"></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-[1400px] mx-auto mt-16 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-          <p>© {new Date().getFullYear()} Atelier Douce. All rights reserved.</p>
-        </div>
-      </footer>
     </main>
   );
 }
