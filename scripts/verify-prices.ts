@@ -8,7 +8,7 @@ const supabase = createClient(
 
 // Expected products based on implementation_plan.md (NEW names and prices)
 const expectedProducts: Record<string, { price: number; category?: string }> = {
-    'Luxe Long Down Coat': { price: 129, category: 'Tops & Bottoms' },
+    'Luxe Long Down Coat': { price: 99, category: 'Tops & Bottoms' },
     'Soft Fit Knit Coat': { price: 49, category: 'Tops & Bottoms' },
     'Soft Cashmere Touch Scarf': { price: 24, category: 'Accessories' },
     'Timeless Camel Wool Coat': { price: 29, category: 'Tops & Bottoms' },

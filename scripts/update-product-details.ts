@@ -16,7 +16,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 // Based on Produkt Liste.csv
 // Items 7, 10, 17 are empty in CSV and will be skipped
 const productUpdates: Record<number, { name: string; price: number; category: string }> = {
-    1: { name: 'Luxe Long Down Coat', price: 129, category: 'Tops & Bottoms' },
+    1: { name: 'Luxe Long Down Coat', price: 99, category: 'Tops & Bottoms' },
     2: { name: 'Soft Fit Knit Coat', price: 49, category: 'Tops & Bottoms' },
     3: { name: 'Soft Cashmere Touch Scarf', price: 24, category: 'Accessories' },
     4: { name: 'Timeless Camel Wool Coat', price: 29, category: 'Tops & Bottoms' },
