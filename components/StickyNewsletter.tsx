@@ -12,12 +12,9 @@ interface StickyNewsletterProps {
 
 export default function StickyNewsletter({ rate = 1, code = 'USD' }: StickyNewsletterProps) {
     const [isVisible, setIsVisible] = useState(false);
-    const [email, setEmail] = useState('');
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [isDismissed, setIsDismissed] = useState(false);
 
     useEffect(() => {
-        // Show after scrolling down a bit
         const handleScroll = () => {
             if (window.scrollY > 300 && !isDismissed) {
                 setIsVisible(true);
@@ -30,30 +27,15 @@ export default function StickyNewsletter({ rate = 1, code = 'USD' }: StickyNewsl
         return () => window.removeEventListener('scroll', handleScroll);
     }, [isDismissed]);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setStatus('loading');
-
-        try {
-            const res = await fetch('/api/subscribe', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-
-            if (!res.ok) throw new Error('Unspecified error');
-
-            setStatus('success');
-            setTimeout(() => {
-                setIsDismissed(true);
-                setIsVisible(false);
-            }, 3000);
-        } catch (err) {
-            setStatus('error');
+    const scrollToNewsletter = () => {
+        const element = document.getElementById('newsletter');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            setIsVisible(false); // Hide the sticky banner after clicking
         }
     };
 
-    if (!isVisible && status !== 'success') return null;
+    if (!isVisible) return null;
     if (isDismissed) return null;
 
     return (
@@ -80,30 +62,14 @@ export default function StickyNewsletter({ rate = 1, code = 'USD' }: StickyNewsl
                     </div>
                 </div>
 
-                {status === 'success' ? (
-                    <div className="bg-[#171717] text-white px-8 py-3 rounded text-sm font-medium animate-fade-in flex flex-col items-start gap-1">
-                        <span>Check your inbox! 💌</span>
-                        <span className="text-[10px] opacity-75 italic">(Check spam if missing)</span>
-                    </div>
-                ) : (
-                    <form onSubmit={handleSubmit} className="flex w-full md:w-auto gap-2">
-                        <input
-                            type="email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            className="flex-1 md:w-64 bg-white border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:border-[#a48354] transition-colors"
-                        />
-                        <button
-                            type="submit"
-                            disabled={status === 'loading'}
-                            className="bg-[#171717] text-white px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-[#a48354] transition-colors disabled:opacity-50"
-                        >
-                            {status === 'loading' ? '...' : 'Subscribe'}
-                        </button>
-                    </form>
-                )}
+                <div className="flex w-full md:w-auto gap-2">
+                    <button
+                        onClick={scrollToNewsletter}
+                        className="w-full md:w-auto bg-[#171717] text-white px-8 py-3 text-xs font-bold uppercase tracking-wider hover:bg-[#a48354] transition-colors"
+                    >
+                        Subscribe
+                    </button>
+                </div>
             </div>
         </div>
     );
