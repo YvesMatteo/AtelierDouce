@@ -3,11 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { resend, FROM_EMAIL } from '@/lib/resend';
 import { renderEmailLayout } from '@/lib/email-templates';
 
-// Initialize Supabase admin client
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Initialize Supabase admin client inside handler
 
 // Prevent Vercel from caching this response
 export const dynamic = 'force-dynamic';
@@ -18,6 +14,12 @@ export async function GET(request: Request) {
     // Ideally verify 'Authorization' header if triggered by Vercel Cron.
 
     console.log('🚀 [CRON] Checking for abandoned checkouts...');
+
+    // Initialize Supabase admin client
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
 
     try {
         // Find "abandoned" records created > 1 hour ago that haven't received an email yet
