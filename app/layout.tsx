@@ -6,6 +6,7 @@ import Sidebar from '@/components/Sidebar';
 import CartDrawer from '@/components/CartDrawer';
 import Footer from '@/components/Footer';
 import TikTokPixel from '@/components/TikTokPixel';
+import GoogleAnalytics from '@/components/GoogleAnalytics';
 import CookieConsent from '@/components/CookieConsent';
 // import AnnouncementBar from '@/components/AnnouncementBar';
 
@@ -70,6 +71,7 @@ export default function RootLayout({
           </div>
         </Providers>
         <TikTokPixel />
+        <GoogleAnalytics />
         <CookieConsent />
       </body>
     </html>
