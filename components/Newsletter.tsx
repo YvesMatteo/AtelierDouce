@@ -10,7 +10,7 @@ interface NewsletterProps {
 
 const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
     const [email, setEmail] = useState('');
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'already_subscribed'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +31,11 @@ const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
                 throw new Error(data.error || 'Something went wrong');
             }
 
-            setStatus('success');
+            if (data.already_subscribed) {
+                setStatus('already_subscribed');
+            } else {
+                setStatus('success');
+            }
             setEmail('');
         } catch (err: any) {
             setStatus('error');
@@ -55,6 +59,13 @@ const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
                         </p>
                         <p className="text-xs text-white/60 mt-4 italic">
                             (If you don't see it, please check your spam folder)
+                        </p>
+                    </div>
+                ) : status === 'already_subscribed' ? (
+                    <div className="bg-[#a48354] text-white p-6 rounded-md">
+                        <p className="font-serif text-lg mb-2">You're already part of our community! 💛</p>
+                        <p className="text-sm opacity-90">
+                            This email is already subscribed to our newsletter. Keep an eye on your inbox for exclusive updates and offers.
                         </p>
                     </div>
                 ) : (

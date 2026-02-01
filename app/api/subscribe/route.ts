@@ -32,7 +32,22 @@ export async function POST(request: Request) {
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
 
-        // Upsert subscriber
+        // Check if subscriber already exists and is verified
+        const { data: existingSubscriber } = await supabase
+            .from('subscribers')
+            .select('email, verified')
+            .eq('email', email)
+            .single();
+
+        if (existingSubscriber?.verified) {
+            // Already a verified subscriber, don't send another email
+            return NextResponse.json({
+                success: true,
+                already_subscribed: true
+            });
+        }
+
+        // Upsert subscriber (new or updating unverified)
         const { error } = await supabase
             .from('subscribers')
             .upsert({
