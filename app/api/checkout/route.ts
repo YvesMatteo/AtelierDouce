@@ -141,6 +141,25 @@ export async function POST(request: Request) {
             coupons.push({ coupon: coupon.id });
         }
 
+        // --- Calculate Shipping ---
+        // $7.00 for the first product, $5.00 for each additional product
+        let totalShippingItems = 0;
+        for (const item of lineItems) {
+            // Exclude free gifts (unit_amount === 0) from shipping count
+            if (item.price_data.unit_amount > 0) {
+                totalShippingItems += item.quantity;
+            }
+        }
+
+        let shippingCostUSD = 0;
+        if (totalShippingItems > 0) {
+            shippingCostUSD = 7 + (totalShippingItems - 1) * 5;
+        }
+
+        const shippingCostTargetCurrency = calculatePrice(shippingCostUSD, rate);
+        const isZeroDecimal = currencyCode === 'JPY';
+        const shippingAmount = isZeroDecimal ? shippingCostTargetCurrency : Math.round(shippingCostTargetCurrency * 100);
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: lineItems,
@@ -156,6 +175,28 @@ export async function POST(request: Request) {
                     'CH', 'SE', 'NO', 'DK', 'PL', 'LI' // Non-Euro Europe
                 ],
             },
+            shipping_options: [
+                {
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: {
+                            amount: shippingAmount,
+                            currency: currencyCode.toLowerCase(),
+                        },
+                        display_name: 'Standard Shipping',
+                        delivery_estimate: {
+                            minimum: {
+                                unit: 'business_day',
+                                value: 5,
+                            },
+                            maximum: {
+                                unit: 'business_day',
+                                value: 12, // Adjusted to be more realistic for dropshipping
+                            },
+                        },
+                    },
+                },
+            ],
             metadata: {
                 cart_items: JSON.stringify(metadataItems).substring(0, 500),
             },

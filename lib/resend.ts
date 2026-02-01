@@ -6,5 +6,5 @@ if (!process.env.RESEND_API_KEY) {
 
 export const resend = new Resend(process.env.RESEND_API_KEY);
 
-export const FROM_EMAIL = 'Atelier Douce <onboarding@resend.dev>'; // Default Resend test email
+export const FROM_EMAIL = 'Atelier Douce <support@atelierdouce.shop>';
 // Recommendation: Update this to 'Atelier Douce <hello@atelierdouce.shop>' once domain is verified

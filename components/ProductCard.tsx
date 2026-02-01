@@ -37,15 +37,15 @@ export default function ProductCard({ product, rate, code }: ProductCardProps) {
                 <h3 className="text-[15px] font-serif text-[#171717] group-hover:text-[#a48354] transition-colors duration-300">
                     {product.name}
                 </h3>
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-3">
+                    <p className="text-[15px] text-[#171717] font-sans font-medium">
+                        {formattedPrice}
+                    </p>
                     {formattedCompareAtPrice && (
-                        <p className="text-[13px] text-[#999] font-sans line-through">
+                        <p className="text-[13px] text-[#999] font-sans line-through decoration-slate-400/60">
                             {formattedCompareAtPrice}
                         </p>
                     )}
-                    <p className="text-[13px] text-[#5e5e5e] font-sans font-medium">
-                        {formattedPrice}
-                    </p>
                 </div>
             </div>
         </Link>
