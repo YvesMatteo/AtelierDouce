@@ -3,10 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { resend, FROM_EMAIL } from '@/lib/resend';
 import { renderEmailLayout } from '@/lib/email-templates';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Initialize inside handler to avoid build-time errors
 
 export async function POST(request: Request) {
     try {
@@ -18,6 +15,12 @@ export async function POST(request: Request) {
 
         // generate a simple token
         const token = crypto.randomUUID();
+
+        // Initialize Supabase Client (Service Role)
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
 
         // Upsert subscriber
         const { error } = await supabase
