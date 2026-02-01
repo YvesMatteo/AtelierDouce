@@ -7,6 +7,7 @@ import { getCurrencyForCountry, calculatePrice, formatPrice } from '@/lib/curren
 import ProductCarousel from '@/components/ProductCarousel';
 import ProductGrid from '@/components/ProductGrid';
 
+import Newsletter from '@/components/Newsletter';
 // ... imports
 
 interface HomeProps {
@@ -181,24 +182,7 @@ export default async function Home(props: HomeProps) {
       </section>
 
       {/* Newsletter */}
-      <section className="py-24 bg-[#faf2e6]">
-        <div className="max-w-xl mx-auto px-6 text-center">
-          <h2 className="text-2xl font-serif mb-4">Join Our Community</h2>
-          <p className="text-[#5e5e5e] text-sm mb-8 leading-relaxed">
-            Subscribe to receive updates, access to exclusive deals, and more.
-          </p>
-          <form className="flex flex-col gap-4">
-            <input
-              type="email"
-              placeholder="Email address"
-              className="bg-transparent border-b border-[#171717]/20 py-3 px-2 text-center text-sm focus:outline-none focus:border-[#171717] transition-colors"
-            />
-            <button className="mt-4 px-10 py-4 bg-[#171717] text-white text-[13px] font-bold tracking-[0.15em] uppercase hover:bg-[#a48354] transition-colors duration-300">
-              Subscribe
-            </button>
-          </form>
-        </div>
-      </section>
+      <Newsletter />
 
     </main>
   );

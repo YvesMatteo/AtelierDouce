@@ -47,14 +47,18 @@ export default function CartDrawer() {
         }
 
         // Track InitiateCheckout
-        cartItems.forEach(item => {
-            trackInitiateCheckout({
-                id: item.productId,
-                name: item.name,
-                price: item.price,
-                currency: item.currency || 'USD'
+        try {
+            cartItems.forEach(item => {
+                trackInitiateCheckout({
+                    id: item.productId,
+                    name: item.name,
+                    price: item.price,
+                    currency: item.currency || 'USD'
+                });
             });
-        });
+        } catch (e) {
+            console.error('Tracking failed', e);
+        }
 
         try {
             // Save abandonment state first
@@ -117,7 +121,7 @@ export default function CartDrawer() {
             />
 
             {/* Drawer */}
-            <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-xl z-[70] transform transition-transform duration-300 ease-in-out flex flex-col">
+            <div className="fixed top-0 right-0 h-[100dvh] w-full max-w-md bg-white shadow-xl z-[70] transform transition-transform duration-300 ease-in-out flex flex-col">
                 {/* Header */}
                 <div className="p-6 flex items-center justify-between border-b border-gray-100">
                     <h2 className="text-xl font-serif">Shopping Cart</h2>
@@ -296,7 +300,7 @@ export default function CartDrawer() {
                 </div>
 
                 {cartItems.length > 0 && (
-                    <div className="p-6 border-t border-gray-100 bg-gray-50/50">
+                    <div className="p-6 border-t border-gray-100 bg-gray-50/50 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
                         <div className="space-y-2 mb-4">
                             <div className="flex justify-between items-center text-sm text-gray-500">
                                 <span>Subtotal</span>
@@ -329,7 +333,7 @@ export default function CartDrawer() {
                                 placeholder="Enter your email to proceed"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-white border border-gray-200 py-3 px-4 text-sm focus:outline-none focus:border-black transition-colors"
+                                className="w-full bg-white border border-gray-200 py-3 px-4 text-base focus:outline-none focus:border-black transition-colors"
                             />
                         </div>
 

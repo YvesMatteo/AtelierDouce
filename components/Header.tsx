@@ -12,9 +12,6 @@ export default function Header() {
     return (
         <>
             {/* Top Bar */}
-            <div className="bg-[#232323] text-white text-[11px] py-2.5 text-center tracking-[0.2em] font-sans font-semibold uppercase">
-                Free Shipping worldwide
-            </div>
 
             {/* Navigation */}
             <nav className="border-b border-gray-100 py-6 px-6 md:px-12 sticky top-0 bg-white/95 backdrop-blur-sm z-50">

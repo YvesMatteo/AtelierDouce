@@ -96,6 +96,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
     }, [cartItems, isLoaded]);
 
+    // --- Recovery Logic ---
+    useEffect(() => {
+        if (!isLoaded) return;
+        if (typeof window === 'undefined') return;
+
+        const params = new URLSearchParams(window.location.search);
+        const recoveryId = params.get('checkout_recovery');
+
+        const handleRecovery = async () => {
+            if (!recoveryId) return;
+
+            console.log('🔄 Attempting to recover cart:', recoveryId);
+            try {
+                const res = await fetch(`/api/abandonment?id=${recoveryId}`);
+                const data = await res.json();
+
+                if (data.success && data.cartItems && Array.isArray(data.cartItems)) {
+                    // Update cart
+                    setCartItems(data.cartItems);
+                    setIsCartOpen(true);
+
+                    // Clean URL
+                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.pushState({ path: newUrl }, '', newUrl);
+                    console.log('✅ Cart recovered successfully!');
+                }
+            } catch (err) {
+                console.error('Failed to recover cart:', err);
+            }
+        };
+
+        if (recoveryId) {
+            handleRecovery();
+        }
+    }, [isLoaded]);
+
 
     const addToCart = (newItem: CartItem) => {
         setCartItems((prevItems) => {

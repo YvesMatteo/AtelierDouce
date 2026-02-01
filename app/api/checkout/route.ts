@@ -16,8 +16,11 @@ export async function POST(request: Request) {
 
         // Detect country and currency
         // We prioritize the server-detected country for security/consistency
+        // Detect country and currency
+        // We prioritize the server-detected country for security/consistency
         const country = request.headers.get('x-vercel-ip-country') || 'US';
         const { code: currencyCode, rate } = getCurrencyForCountry(country);
+        const origin = request.headers.get('origin') || 'https://atelierdouce.shop';
 
         const lineItems = [];
         const metadataItems: any[] = [];
@@ -86,7 +89,9 @@ export async function POST(request: Request) {
                         description: selectedOptions
                             ? Object.entries(selectedOptions).map(([k, v]) => `${k}: ${v}`).join(', ')
                             : undefined,
-                        images: product.images || [],
+                        images: (product.images || []).map((img: string) =>
+                            img.startsWith('http') ? img : `${origin}${img}`
+                        ),
                         metadata: {
                             product_id: product.id,
                             cj_product_id: product.cj_product_id,
@@ -153,7 +158,12 @@ export async function POST(request: Request) {
 
         let shippingCostUSD = 0;
         if (totalShippingItems > 0) {
-            shippingCostUSD = 7 + (totalShippingItems - 1) * 5;
+            // Cap the billable additional items so that shipping stops increasing after 3 products
+            // 1 item: $7
+            // 2 items: $12
+            // 3+ items: $17
+            const cappedItems = Math.min(totalShippingItems, 3);
+            shippingCostUSD = 7 + (cappedItems - 1) * 5;
         }
 
         const shippingCostTargetCurrency = calculatePrice(shippingCostUSD, rate);
