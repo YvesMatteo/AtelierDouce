@@ -243,15 +243,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             allUnits[0].discountType = 'FREE';
             allUnits[0].discountAmount = allUnits[0].price;
 
-            // Rule: Others get 15% off
-            for (let i = 1; i < count; i++) {
+            // Rule: Exactly 2 others get 15% off (Limit to 2)
+            // indices 1 and 2
+            for (let i = 1; i < Math.min(count, 3); i++) {
                 allUnits[i].discountType = '15%OFF';
                 allUnits[i].discountAmount = allUnits[i].price * 0.15;
             }
 
-        } else if (count >= 3) {
-            // Rule: Buy 3, 15% off all
-            for (let i = 0; i < count; i++) {
+        } else if (count >= 2) {
+            // Rule: Buy 2+, 15% off on up to 2 items
+            for (let i = 0; i < Math.min(count, 2); i++) {
                 allUnits[i].discountType = '15%OFF';
                 allUnits[i].discountAmount = allUnits[i].price * 0.15;
             }
