@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     }
 
     try {
-        const { email } = await request.json();
+        const { email, source = 'unknown' } = await request.json();
 
         if (!email || !email.includes('@')) {
             return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
@@ -52,6 +52,7 @@ export async function POST(request: Request) {
             .from('subscribers')
             .upsert({
                 email,
+                source,
                 verified: false,
                 verification_token: token,
                 updated_at: new Date().toISOString()

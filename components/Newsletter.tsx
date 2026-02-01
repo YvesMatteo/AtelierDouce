@@ -22,7 +22,7 @@ const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
             const res = await fetch('/api/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email, source: 'community' }),
             });
 
             const data = await res.json();
