@@ -15,8 +15,10 @@ export default function ProductCard({ product, rate, code }: ProductCardProps) {
     const price = calculatePrice(product.price, rate);
     const formattedPrice = formatPrice(price, code);
 
-    const compareAtPrice = product.compare_at_price ? calculatePrice(product.compare_at_price, rate) : null;
-    const formattedCompareAtPrice = compareAtPrice ? formatPrice(compareAtPrice, code) : null;
+    const compareAtPrice = product.compare_at_price
+        ? calculatePrice(product.compare_at_price, rate)
+        : Math.ceil(price * 1.5);
+    const formattedCompareAtPrice = formatPrice(compareAtPrice, code);
 
     return (
         <Link href={`/product/${product.id}`} className="group cursor-pointer block h-full">
