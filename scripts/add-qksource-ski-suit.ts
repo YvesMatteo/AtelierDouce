@@ -12,25 +12,22 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 async function main() {
-    console.log('🎿 Adding QKSource Ski Suit...\n');
+    console.log('🎿 Adding QKSource Ski Suit...\\n');
 
     const product = {
-        name: 'Premium Winter Ski Suit',
-        description: 'Stay warm and stylish on the slopes with our Premium Winter Ski Suit. Waterproof, windproof, and designed for maximum comfort and flexibility. Features a flattering fit, multiple pockets, and high-quality thermal insulation.',
+        name: 'Winter Ski Suit - Warm Waterproof Fashion',
+        description: 'Stay warm and stylish on the slopes with our Premium Winter Ski Suit. Waterproof, windproof, and designed for maximum comfort and flexibility. Features a flattering fit, multiple pockets, and high-quality thermal insulation. Available in Black and White.',
         price: 99,
-        category: 'Tops & Bottoms',
+        category: 'Clothing',
         supplier: 'Qksource',
         cj_product_id: '1745817525838946304',
         images: [
-            // Main image (Black)
-            'https://cf.cjdropshipping.com/quick/product/531385c1-1649-4428-b59a-d3bc16ce2e7e.jpg',
-            // White
-            'https://cf.cjdropshipping.com/quick/product/c3f4d32f-cfee-4130-9968-8293ab511d07.jpg',
-            // Gallery
-            'https://cf.cjdropshipping.com/quick/product/f96fd381-3fd5-498e-9aea-90da5990e661.jpg',
-            'https://cf.cjdropshipping.com/quick/product/69b5a754-ea12-495c-8032-8f858a85e463.jpg',
-            'https://cf.cjdropshipping.com/quick/product/95d0f31f-541f-4189-ad9e-907dc24e6ac7.jpg',
-            'https://cf.cjdropshipping.com/quick/product/2ca43b36-fbfc-4ae0-add2-19daa8594f40.jpg',
+            'https://cf.cjdropshipping.com/17051040/2401130230310320400.jpg',
+            'https://cf.cjdropshipping.com/17051040/2401130230310320700.jpg',
+            'https://cf.cjdropshipping.com/17051040/2401130230310321400.jpg',
+            'https://cf.cjdropshipping.com/17051040/2401130230310321900.jpg',
+            'https://cf.cjdropshipping.com/17051040/2401130230310322400.jpg',
+            'https://cf.cjdropshipping.com/17051040/2401130230310322700.jpg',
         ],
         options: {
             Color: ['Black', 'White'],
@@ -79,8 +76,7 @@ async function main() {
                 supplier: product.supplier,
                 cj_product_id: product.cj_product_id,
                 stripe_product_id: stripeProduct.id,
-                stripe_price_id: stripePrice.id,
-                product_options: product.options // Store variants directly
+                stripe_price_id: stripePrice.id
             })
             .select()
             .single();
@@ -88,12 +84,7 @@ async function main() {
         if (dbError) throw dbError;
         console.log(`   ✅ Added product to DB: ${dbProduct.id}`);
 
-        // 4. Create Variant Specifics (Optional, but good for tracking)
-        // Note: For now we're storing options in the main product JSON, 
-        // but if we were using a separate variants table we'd populate it here.
-        // The current schema just uses `product_options` JSONB column.
-
-        console.log('\n✨ Product successfully added!');
+        console.log('\\n✨ Product successfully added!');
 
     } catch (err: any) {
         console.error('❌ Error adding product:', err.message);

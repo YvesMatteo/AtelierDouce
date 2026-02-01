@@ -69,10 +69,9 @@ export async function POST(request: Request) {
                 continue;
             }
 
-            // Calculate price based on the fixed base price and current rate
-            // This ensures we always charge the equivalent of BASE_PRICE_USD ($49)
-            // rounded up to the nearest integer in the local currency.
-            const calculatedPrice = calculatePrice(BASE_PRICE_USD, rate);
+            // Calculate price based on the product price from DB
+            const basePrice = product.price || BASE_PRICE_USD;
+            const calculatedPrice = calculatePrice(basePrice, rate);
 
             // Stripe expects amounts in smallest currency unit (e.g., cents)
             // JPY is zero-decimal. Others in our list are 2-decimal.
@@ -106,6 +105,13 @@ export async function POST(request: Request) {
                 charged_currency: currencyCode,
                 charged_amount: calculatedPrice,
             });
+
+            // Store for discount calculation
+            // We use a temporary array or push to a collection here would be better,
+            // but since we are iterating, we can reconstruct or modify the logic.
+            // Let's modify the loop to map items to a new structure that includes price, then proceed.
+            // However, to minimize refactoring risk, let's just push to a local array.
+
         }
 
         if (lineItems.length === 0) {
@@ -113,16 +119,13 @@ export async function POST(request: Request) {
         }
 
         // --- Calculate Discounts (Using Shared Logic) ---
-        const isZeroDecimal = currencyCode === 'JPY';
-        const singleItemPrice = calculatePrice(BASE_PRICE_USD, rate);
-        const singleItemUnitAmount = isZeroDecimal ? singleItemPrice : singleItemPrice * 100;
-
-        // Prepare items for calculation
-        const calcItems = items
-            .filter((item: any) => item.productId !== 'GIFT-EARRINGS')
-            .map((item: any) => ({
-                price: singleItemUnitAmount,
-                quantity: item.quantity || 1
+        // --- Calculate Discounts (Using Shared Logic) ---
+        // Reuse lineItems which have the correct, DB-verified prices in cents/smallest unit
+        const calcItems = lineItems
+            .filter(li => li.price_data.unit_amount > 0) // Exclude gifts
+            .map(li => ({
+                price: li.price_data.unit_amount,
+                quantity: li.quantity
             }));
 
         const discountAmount = calculateDiscount(calcItems);

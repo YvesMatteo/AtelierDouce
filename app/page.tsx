@@ -3,22 +3,23 @@ import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { Product } from '@/lib/types';
 import { headers } from 'next/headers';
-import { getCurrencyForCountry, calculatePrice, formatPrice, BASE_PRICE_USD } from '@/lib/currency';
+import { getCurrencyForCountry, calculatePrice, formatPrice } from '@/lib/currency';
 import ProductCarousel from '@/components/ProductCarousel';
 import ProductGrid from '@/components/ProductGrid';
 
 // ... imports
 
 interface HomeProps {
-  searchParams: Promise<{ category?: string; gender?: string; search?: string }>;
+  searchParams: Promise<{ category?: string; gender?: string; search?: string; sort?: string }>;
 }
 
 async function getProducts(gender?: string, category?: string, search?: string): Promise<Product[]> {
   const FEATURED_IDS = [
-    '2ec94e02-4392-4b0f-a105-70c59427b8ce', // Solid Color Premium Bag
-    '9dae65a1-e8c2-454d-b9a7-6032bf7936ee', // Pink Casual Fashion Bag
-    'a4ff2c89-d821-434f-8578-817075daccf8', // Loose Fit Gray Coat
-    'daad8d36-e5fa-4c6a-ba5a-ef01cc92435e', // Classic Short Coat
+    '01f0b84d-c345-46a7-b2ec-d321df601c8c', // Luxe Fox Fur Ear Warmers
+    '9dae65a1-e8c2-454d-b9a7-6032bf7936ee', // Pink Cloud Puffer Jacket
+    'd1cf713c-5d86-4537-a5a4-8d7f4927f672', // Winter Ski Suit (White)
+    'b0416bcb-4efd-49ef-84c5-53d2b12ed7ab', // Loose Fit Camel Coat (Beige Jacket)
+    'fd7e7e2d-7539-42f7-91dc-1d6b9ee27b8d', // Winter Outdoor Body Hoodie (Black Outfit)
   ];
 
   let query = supabase
@@ -93,7 +94,7 @@ async function getProducts(gender?: string, category?: string, search?: string):
 
 export default async function Home(props: HomeProps) {
   const searchParams = await props.searchParams;
-  const { category, gender, search } = searchParams;
+  const { category, gender, search, sort } = searchParams;
 
   const products = await getProducts(gender, category, search);
   const headersList = await headers();
@@ -161,20 +162,22 @@ export default async function Home(props: HomeProps) {
             <span className="text-sm text-[#5e5e5e]">{products.length} products</span>
           </div>
 
-          {(!category && !search && !gender) ? (
+          {(!category && !search && !gender && !sort) ? (
             <ProductCarousel products={products.slice(0, 4)} rate={rate} code={code} />
           ) : (
             <ProductGrid products={products} rate={rate} code={code} />
           )}
 
-          <div className="flex justify-center mt-12">
-            <Link
-              href="/?category=All"
-              className="px-10 py-4 bg-[#171717] text-white text-[13px] font-bold tracking-[0.15em] uppercase hover:bg-[#a48354] transition-colors duration-300"
-            >
-              Shop All
-            </Link>
-          </div>
+          {(!category && !sort) && (
+            <div className="flex justify-center mt-12">
+              <Link
+                href="/?category=All"
+                className="px-10 py-4 bg-[#171717] text-white text-[13px] font-bold tracking-[0.15em] uppercase hover:bg-[#a48354] transition-colors duration-300"
+              >
+                Shop All
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 

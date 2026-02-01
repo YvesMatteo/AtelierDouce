@@ -42,7 +42,8 @@ export default async function ProductPage({ params }: PageProps) {
         notFound();
     }
 
-    const price = calculatePrice(BASE_PRICE_USD, rate);
+    const basePrice = product.price || BASE_PRICE_USD;
+    const price = calculatePrice(basePrice, rate);
     const formattedPrice = formatPrice(price, code);
 
     // Calculate a fake "compare at" price (e.g. 1.5x)

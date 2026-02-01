@@ -5,6 +5,7 @@ import { Providers } from './providers';
 import Sidebar from '@/components/Sidebar';
 import CartDrawer from '@/components/CartDrawer';
 import Footer from '@/components/Footer';
+import TikTokPixel from '@/components/TikTokPixel';
 
 const ovo = Ovo({
   weight: '400',
@@ -43,6 +44,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </Providers>
+        <TikTokPixel />
       </body>
     </html>
   );

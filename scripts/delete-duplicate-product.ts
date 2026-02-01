@@ -12,15 +12,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: '2023-10-16' as any,
 });
 
-// The ID to remove (duplicate)
-// One was -TOP, one was -BOT. 
-// "B4158AAB-B1EE-431B-A468-D1BA8085452B-BOT" seems less relevant if it's a full suit?
-// But they have same images.
-// Let's remove the one with Supabase ID "7e3b0d7b..." (which was -BOT)
-const DUPLICATE_ID = '7e3b0d7b-7965-49a7-83be-66a3071a6fbe';
+// The ID to remove
+const DUPLICATE_ID = 'df0e4c82-0bc5-449a-9408-9f6ef091613e';
 
 async function deleteDuplicate() {
-    console.log(`🗑️ Deleting duplicate product: ${DUPLICATE_ID}...`);
+    console.log(`🗑️ Deleting product: ${DUPLICATE_ID}...`);
 
     // Get details to remove from Stripe
     const { data: product } = await supabase.from('products').select('*').eq('id', DUPLICATE_ID).single();

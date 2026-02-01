@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Product } from '@/lib/types';
 import BuyButton from './BuyButton';
+import { useTikTokPixel } from '@/hooks/useTikTokPixel';
 
 interface ProductActionsProps {
     product: Product;
@@ -13,6 +14,17 @@ interface ProductActionsProps {
 export default function ProductActions({ product, currentPrice, currencyCode }: ProductActionsProps) {
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
     const [selectedVariantId, setSelectedVariantId] = useState<string | undefined>(undefined);
+    const { trackViewContent } = useTikTokPixel();
+
+    // Track ViewContent on mount
+    useEffect(() => {
+        trackViewContent({
+            id: product.id,
+            name: product.name,
+            price: currentPrice || product.price,
+            currency: currencyCode || 'USD'
+        });
+    }, [product, currentPrice, currencyCode, trackViewContent]);
 
     // Initialize selections if there's only one value for an option
     useEffect(() => {

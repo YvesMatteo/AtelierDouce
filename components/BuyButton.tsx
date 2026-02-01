@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useCart } from '@/app/context/CartContext';
+import { useTikTokPixel } from '@/hooks/useTikTokPixel';
 
 interface BuyButtonProps {
     productId: string;
@@ -17,6 +18,7 @@ interface BuyButtonProps {
 export default function BuyButton({ productId, productName, price, currency, image, selectedOptions, disabled, cjVariantId }: BuyButtonProps) {
     const [loading, setLoading] = useState(false);
     const { addToCart } = useCart();
+    const { trackAddToCart } = useTikTokPixel();
 
     const handleAddToCart = async () => {
         setLoading(true);
@@ -32,6 +34,13 @@ export default function BuyButton({ productId, productName, price, currency, ima
             quantity: 1,
             selectedOptions,
             cj_variant_id: cjVariantId,
+        });
+
+        trackAddToCart({
+            id: productId,
+            name: productName,
+            price: price,
+            currency: currency
         });
 
         setLoading(false);

@@ -6,6 +6,7 @@ import { useCart } from '../app/context/CartContext';
 import { useState } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import DiscountProgress from './DiscountProgress';
+import { useTikTokPixel } from '@/hooks/useTikTokPixel';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -24,6 +25,7 @@ export default function CartDrawer() {
         addToCart,
     } = useCart();
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const { trackInitiateCheckout } = useTikTokPixel();
 
     const currencyCode = cartItems.length > 0 && cartItems[0].currency ? cartItems[0].currency : 'USD';
     const currencySymbol = currencyCode === 'USD' ? '$'
@@ -36,6 +38,17 @@ export default function CartDrawer() {
 
     const handleCheckout = async () => {
         setIsCheckingOut(true);
+
+        // Track InitiateCheckout
+        cartItems.forEach(item => {
+            trackInitiateCheckout({
+                id: item.productId,
+                name: item.name,
+                price: item.price,
+                currency: item.currency || 'USD'
+            });
+        });
+
         try {
             const response = await fetch('/api/checkout', {
                 method: 'POST',
