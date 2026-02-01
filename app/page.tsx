@@ -16,10 +16,9 @@ interface HomeProps {
 async function getProducts(gender?: string, category?: string, search?: string): Promise<Product[]> {
   const FEATURED_IDS = [
     '01f0b84d-c345-46a7-b2ec-d321df601c8c', // Luxe Fox Fur Ear Warmers
-    '9dae65a1-e8c2-454d-b9a7-6032bf7936ee', // Pink Cloud Puffer Jacket
-    'd1cf713c-5d86-4537-a5a4-8d7f4927f672', // Winter Ski Suit (White)
-    'b0416bcb-4efd-49ef-84c5-53d2b12ed7ab', // Loose Fit Camel Coat (Beige Jacket)
-    'fd7e7e2d-7539-42f7-91dc-1d6b9ee27b8d', // Winter Outdoor Body Hoodie (Black Outfit)
+    'a4ff2c89-d821-434f-8578-817075daccf8', // Soft Fit Knit Coat
+    'd9e478e7-2e72-4b34-987f-7fed63572326', // Brushed Fleece Leggings
+    'd1cf713c-5d86-4537-a5a4-8d7f4927f672', // Winter Ski Suit (described as White in previous context, checking match)
   ];
 
   let query = supabase
