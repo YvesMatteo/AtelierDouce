@@ -200,6 +200,8 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
         }).format(price);
     };
 
+    if (!isOpen) return null;
+
     return (
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-4 sm:pt-24 px-4">
             {/* Backdrop - lighter and more elegant */}
