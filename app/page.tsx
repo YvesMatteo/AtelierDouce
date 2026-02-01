@@ -87,6 +87,32 @@ async function getProducts(gender?: string, category?: string, search?: string):
       }
     }
 
+    // Sort the 'others' list
+    others.sort((a, b) => {
+      // 1. Sort by Category
+      if (a.category !== b.category) {
+        return (a.category || '').localeCompare(b.category || '');
+      }
+
+      // 2. Custom grouping within 'Clothing'
+      if (a.category === 'Clothing') {
+        const getGroup = (name: string) => {
+          const n = name.toLowerCase();
+          if (n.includes('puffer')) return 1;
+          if (n.includes('ski')) return 2;
+          if (n.includes('coat')) return 3;
+          if (n.includes('jacket')) return 4;
+          return 5;
+        };
+        const groupA = getGroup(a.name);
+        const groupB = getGroup(b.name);
+        if (groupA !== groupB) return groupA - groupB;
+      }
+
+      // 3. Alphabetical fallback
+      return a.name.localeCompare(b.name);
+    });
+
     products = [...featured, ...others];
   }
 
