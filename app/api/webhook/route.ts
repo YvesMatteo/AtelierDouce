@@ -70,8 +70,10 @@ export async function POST(request: Request) {
                 console.log('📦 Order saved:', order.id);
             }
 
-            // Save order items (only if new order)
-            // Parse cart items from metadata to get selected options per product
+            // Prepare items for email
+            const emailItems: any[] = [];
+
+            // Parse cart items from metadata (needed for options mapping)
             let cartItems: any[] = [];
             try {
                 cartItems = JSON.parse(session.metadata?.cart_items || '[]');
@@ -110,6 +112,16 @@ export async function POST(request: Request) {
                             cj_variant_id: giftCjVariantId,
                             supplier: 'CJ', // Default gifts to CJ for now
                         });
+
+                        // Add to email items
+                        emailItems.push({
+                            name: product.name,
+                            quantity: 1,
+                            options: { Color: selectedColor },
+                            cj_product_id: product.metadata?.cj_product_id,
+                            supplier: 'CJ'
+                        });
+
                         continue;
                     }
 
@@ -150,6 +162,15 @@ export async function POST(request: Request) {
                         cj_variant_id: cjVariantId,
                         supplier: dbProduct?.supplier || 'CJ',
                     });
+
+                    // Add to email items
+                    emailItems.push({
+                        name: product.name, // Use name from Stripe product
+                        quantity: item.quantity || 1,
+                        options: selectedOptions,
+                        cj_product_id: dbProduct?.cj_product_id,
+                        supplier: dbProduct?.supplier || 'CJ'
+                    });
                 }
                 console.log('📝 Order items saved');
             } else {
@@ -160,14 +181,25 @@ export async function POST(request: Request) {
             // await processOrderAutomation(order.id);
             console.log('       🛑 Automation disabled (Manual Fulfillment Mode)');
 
+            // Validate Address
+            const shippingAddress = (session as any).shipping_details?.address || session.customer_details?.address;
+            if (!shippingAddress) {
+                console.warn('⚠️ No address found in session:', session.id);
+            } else {
+                console.log('📍 Shipping Address found:', shippingAddress);
+            }
+
+            // Update order with best available address if needed (redundant usually if insert worked, but good for debug)
+            if (shippingAddress) {
+                await supabaseAdmin.from('orders').update({
+                    shipping_address: shippingAddress
+                }).eq('id', order.id);
+                // Update local order object for email
+                order.shipping_address = shippingAddress;
+            }
+
             // Send Email Notification
-            await sendOrderEmail(order, cartItems.map((ci: any) => ({
-                name: ci.name || 'Unknown Product',
-                quantity: ci.quantity || 1,
-                options: ci.selected_options,
-                cj_product_id: ci.cj_product_id,
-                supplier: ci.supplier
-            })));
+            await sendOrderEmail(order, emailItems);
 
             // Mark abandoned checkout as recovered
             if (session.customer_details?.email) {

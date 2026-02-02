@@ -9,9 +9,11 @@ import { renderEmailLayout } from '@/lib/email-templates';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
-    // Basic auth check using a query param secret if wanted, 
-    // but for now we'll rely on obscurity or Vercel Cron protection.
-    // Ideally verify 'Authorization' header if triggered by Vercel Cron.
+    // Verify Cron Secret
+    const authHeader = request.headers.get('authorization');
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+        return new NextResponse('Unauthorized', { status: 401 });
+    }
 
     console.log('🚀 [CRON] Checking for abandoned checkouts...');
 

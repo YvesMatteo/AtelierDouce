@@ -14,10 +14,11 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 async function main() {
     console.log('🔧 Fixing Stripe Product Issues...\n');
 
-    // Fetch all products from database
+    // Fetch all products from database that are active
     const { data: products, error } = await supabase
         .from('products')
-        .select('id, name, price, stripe_product_id, stripe_price_id')
+        .select('id, name, description, price, stripe_product_id, stripe_price_id, is_active')
+        .eq('is_active', true)
         .order('name');
 
     if (error || !products) {
@@ -28,14 +29,20 @@ async function main() {
     let fixedCount = 0;
 
     for (const product of products) {
+        // Handle missing Stripe Product
         if (!product.stripe_product_id) {
-            console.log(`⏭️ ${product.name}: No Stripe product ID - skipping`);
-            continue;
+            console.log(`🆕 ${product.name}: Creating new Stripe product...`);
+            const stripeProduct = await stripe.products.create({
+                name: product.name,
+                description: product.description || undefined,
+            });
+
+            await supabase.from('products').update({ stripe_product_id: stripeProduct.id }).eq('id', product.id);
+            product.stripe_product_id = stripeProduct.id;
         }
 
         try {
             const stripeProduct = await stripe.products.retrieve(product.stripe_product_id);
-
             const needsUpdate: any = {};
 
             // Fix inactive product
@@ -50,35 +57,61 @@ async function main() {
                 console.log(`🔄 ${product.name}: Updating Stripe name from "${stripeProduct.name}"...`);
             }
 
+            // Fix description mismatch (optional but good)
+            if (product.description && stripeProduct.description !== product.description) {
+                needsUpdate.description = product.description;
+                console.log(`🔄 ${product.name}: Updating description...`);
+            }
+
             if (Object.keys(needsUpdate).length > 0) {
                 await stripe.products.update(product.stripe_product_id, needsUpdate);
-                console.log(`   ✅ Fixed: ${product.name}`);
+                console.log(`   ✅ Fixed Product Metadata: ${product.name}`);
                 fixedCount++;
             }
 
-            // Check if price is inactive and create new one if needed
-            if (product.stripe_price_id) {
-                const stripePrice = await stripe.prices.retrieve(product.stripe_price_id);
-                if (!stripePrice.active) {
-                    console.log(`🔄 ${product.name}: Creating new active price...`);
+            // --- PRICE CHECK ---
+            const targetAmount = Math.round(product.price * 100);
+            let priceValid = false;
+            let currentPriceId = product.stripe_price_id;
 
-                    const newPrice = await stripe.prices.create({
-                        product: product.stripe_product_id,
-                        unit_amount: Math.round(product.price * 100),
-                        currency: 'eur',
-                    });
-
-                    await stripe.products.update(product.stripe_product_id, {
-                        default_price: newPrice.id,
-                    });
-
-                    await supabase
-                        .from('products')
-                        .update({ stripe_price_id: newPrice.id })
-                        .eq('id', product.id);
-
-                    console.log(`   ✅ New price created: ${newPrice.id}`);
+            if (currentPriceId) {
+                try {
+                    const stripePrice = await stripe.prices.retrieve(currentPriceId);
+                    if (
+                        stripePrice.active &&
+                        stripePrice.currency === 'usd' &&
+                        stripePrice.unit_amount === targetAmount
+                    ) {
+                        priceValid = true;
+                    } else {
+                        console.log(`   ⚠️ Price mismatch for ${product.name}. Expected: $${product.price} (usd), Found: ${stripePrice.unit_amount ? stripePrice.unit_amount / 100 : 'null'} (${stripePrice.currency}) [Active: ${stripePrice.active}]`);
+                    }
+                } catch (e) {
+                    console.log(`   ⚠️ Could not retrieve price ${currentPriceId}, assuming invalid.`);
                 }
+            } else {
+                console.log(`   ⚠️ No Stripe Price ID for ${product.name}`);
+            }
+
+            if (!priceValid) {
+                console.log(`🔄 ${product.name}: Creating correct price of $${product.price}...`);
+                const newPrice = await stripe.prices.create({
+                    product: product.stripe_product_id,
+                    unit_amount: targetAmount,
+                    currency: 'usd',
+                });
+
+                await stripe.products.update(product.stripe_product_id, {
+                    default_price: newPrice.id,
+                });
+
+                await supabase
+                    .from('products')
+                    .update({ stripe_price_id: newPrice.id })
+                    .eq('id', product.id);
+
+                console.log(`   ✅ New price created: ${newPrice.id}`);
+                fixedCount++;
             }
 
         } catch (err: any) {
@@ -87,7 +120,7 @@ async function main() {
     }
 
     console.log('\n' + '='.repeat(50));
-    console.log(`✨ Fixed ${fixedCount} products`);
+    console.log(`✨ Fixed/Updated ${fixedCount} items (products or prices)`);
 }
 
 main().catch(console.error);

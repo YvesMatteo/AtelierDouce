@@ -172,6 +172,11 @@ export async function POST(request: Request) {
 
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
+            payment_method_options: {
+                card: {
+                    request_three_d_secure: 'automatic',
+                },
+            },
             line_items: lineItems,
             mode: 'payment',
             discounts: coupons,
