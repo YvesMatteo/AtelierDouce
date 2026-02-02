@@ -84,12 +84,36 @@ export async function POST(request: Request) {
             // Process Line Items (populate email items and save to DB if new)
             for (const item of lineItems.data) {
                 const product = item.price?.product as Stripe.Product;
+                let selectedOptions: Record<string, any> = {};
+
+                // Try to parse options from product metadata (New Way)
+                try {
+                    if (product.metadata?.selected_options) {
+                        selectedOptions = JSON.parse(product.metadata.selected_options);
+                    }
+                } catch (e) {
+                    console.warn('Failed to parse selected_options from metadata', product.id);
+                }
+
+                // Fallback to cartItems parsing (Old Way - kept for safety or older checkouts)
+                if (Object.keys(selectedOptions).length === 0 && cartItems.length > 0) {
+                    // Try to find by CJ ID or product ID
+                    const cjId = product.metadata?.cj_product_id;
+                    const match = cartItems.find((ci: any) => ci.cj_product_id === cjId);
+                    if (match) selectedOptions = match.selected_options || {};
+                }
+
 
                 // Handle free gift items
                 if (product.metadata?.is_gift === 'true') {
-                    // Find the gift item in cart_items metadata to get the selected color
-                    const giftCartItem = cartItems.find((ci: any) => ci.is_gift === true);
-                    const selectedColor = giftCartItem?.selected_options?.Color || 'Gold'; // Default to Gold
+                    // Gift options should be in metadata now, but maintain fallback just in case
+                    if (Object.keys(selectedOptions).length === 0) {
+                        const giftCartItem = cartItems.find((ci: any) => ci.is_gift === true);
+                        const selectedColor = giftCartItem?.selected_options?.Color || 'Gold';
+                        selectedOptions = { Color: selectedColor };
+                    }
+
+                    const selectedColor = selectedOptions.Color || 'Gold';
 
                     // Map Color to CJ Variant ID
                     // Gold: 1381486070289534976
@@ -126,17 +150,13 @@ export async function POST(request: Request) {
                     continue;
                 }
 
+                // Standard Products
                 // Find product in our database by Stripe product ID
-                // Use Admin client to ensure we can read products if any policies are restrictive
                 const { data: dbProduct } = await supabaseAdmin
                     .from('products')
                     .select('id, cj_product_id, variants, supplier')
                     .eq('stripe_product_id', product.id)
                     .single();
-
-                // Find the matching cart item to get selected options
-                const cartItem = cartItems.find((ci: any) => ci.cj_product_id === dbProduct?.cj_product_id);
-                const selectedOptions = cartItem?.selected_options || {};
 
                 // Look up the correct variant ID from the variants array
                 let cjVariantId = dbProduct?.cj_product_id; // Fallback to product ID

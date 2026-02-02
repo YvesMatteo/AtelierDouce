@@ -42,7 +42,8 @@ export async function POST(request: Request) {
                             ],
                             metadata: {
                                 is_gift: 'true',
-                                cj_product_id: '1381486068892831744'
+                                cj_product_id: '1381486068892831744',
+                                selected_options: selectedOptions ? JSON.stringify(selectedOptions) : '{}'
                             },
                         },
                         unit_amount: 0,
@@ -95,6 +96,7 @@ export async function POST(request: Request) {
                         metadata: {
                             product_id: product.id,
                             cj_product_id: product.cj_product_id,
+                            selected_options: selectedOptions ? JSON.stringify(selectedOptions) : '{}'
                         },
                     },
                     unit_amount: unitAmount,
