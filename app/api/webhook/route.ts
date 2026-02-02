@@ -177,9 +177,12 @@ export async function POST(request: Request) {
                     .eq('email', session.customer_details.email);
             }
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error processing order:', error);
-            // Still return 200 to prevent Stripe retries, but log the error
+            return NextResponse.json(
+                { error: `Order Processing Failed: ${error.message}` },
+                { status: 500 }
+            );
         }
     }
 
