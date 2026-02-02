@@ -8,9 +8,9 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 ### Outerwear
 
-#### Down Jacket
+#### Oversized Puffer Down Jacket
 - **Product Thumbnail**: ![Down Jacket](https://cf.cjdropshipping.com/4ac2b171-c0d0-4249-8569-37c69e2fb278.jpg)
-- **Website Price**: $181.95
+- **Website Price**: $149.00
 - **Supplier Price**: $51.82
 - **Margin**: $130.13 (71%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2000862978889248769)
@@ -23,41 +23,41 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 - **Margin**: $33.53 (67%)
 - **Link to QkSource**: [View Product](https://qksource.com/product/winter-coat-warm-lapel-long-fluffy-faux-fur-coat-women-loose-long-sleeve-jacket-outerwear-clothing-p-2501070601131628700.html)
 
-#### Hood Warm Jacket Brown
+#### Fur Hood Winter Jacket
 - **Product Thumbnail**: ![Hood Warm Jacket](https://yefzblyovihrvoqcqjtg.supabase.co/storage/v1/object/public/products/brown-puffer-white-1769599642151.png)
-- **Website Price**: $35.00
+- **Website Price**: $79.00
 - **Supplier Price**: $11.61-11.85
 - **Margin**: ~$23 (67%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=7FE80359-83EB-412E-BB50-F8C4DB86E1AA)
 - **Link to QkSource**: [View Product](https://qksource.com/product/hood-warm-jacket-brown-p-7FE80359-83EB-412E-BB50-F8C4DB86E1AA.html)
 
-#### Short Coat
+#### Paris Short Elegant Coat
 - **Product Thumbnail**: ![Short Coat](https://cf.cjdropshipping.com/be3d5dc1-fa31-4580-907a-e97a41de7c73.jpg)
-- **Website Price**: $67.95
+- **Website Price**: $39.00
 - **Supplier Price**: $19.15
 - **Margin**: $48.80 (72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1626869424990990336)
 - **Link to QkSource**: [View Product](https://qksource.com/product/short-coat-p-1626869424990990336.html)
 
-#### Stylish Outerwear #1
+#### Navy Cloud Puffer Jacket
 - **Product Thumbnail**: ![Stylish Outerwear](https://cf.cjdropshipping.com/quick/product/e9635d77-66d4-4d1a-8f97-e0dc63a52ac5.jpg)
-- **Website Price**: $38.95
+- **Website Price**: $89.00
 - **Supplier Price**: $11.11-14.10
 - **Margin**: ~$25-28 (64-71%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2411190554561614400)
 - **Link to QkSource**: [View Product](https://qksource.com/product/stylish-outerwear-p-2411190554561614400.html)
 
-#### Stylish Outerwear #2
+#### Timeless Camel Wool Coat
 - **Product Thumbnail**: ![Stylish Outerwear](https://cf.cjdropshipping.com/quick/product/f4832af6-d24f-4c93-ae95-7d842ae92a58.jpg)
-- **Website Price**: $21.95
+- **Website Price**: $79.00
 - **Supplier Price**: $6.22-11.44
 - **Margin**: ~$10.50-15.70 (48-72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2510140745261632700)
 - **Link to QkSource**: [View Product](https://qksource.com/product/stylish-outerwear-p-2510140745261632700.html)
 
-#### Stylish Outerwear #3
+#### Soft Fit Knit Coat
 - **Product Thumbnail**: ![Stylish Outerwear](https://cf.cjdropshipping.com/quick/product/03ce85af-9811-4cd6-9358-12ea1e958f19.jpg)
-- **Website Price**: $42.95
+- **Website Price**: $49.00
 - **Supplier Price**: $12.11
 - **Margin**: $30.84 (72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2508241410251629900)
@@ -67,9 +67,9 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 ### Elegant Collection
 
-#### Elegant Collection Piece #1
+#### Vintage Metal Hoop Earrings
 - **Product Thumbnail**: ![Elegant Piece](https://cf.cjdropshipping.com/1618206790596.jpg)
-- **Website Price**: $1.95
+- **Website Price**: $14.00
 - **Supplier Price**: $0.43
 - **Margin**: $1.52 (78%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1381486068892831744)
@@ -91,17 +91,17 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1544965318324531200)
 - **Link to QkSource**: [View Product](https://qksource.com/product/elegant-collection-piece-p-1544965318324531200.html)
 
-#### Elegant Collection Piece #4
+#### Solid Color Versatile Winter Warm Extended Tassel Scarf
 - **Product Thumbnail**: ![Elegant Piece](https://cf.cjdropshipping.com/quick/product/79846cf2-1632-4385-b771-6529c9e6b4ac.jpg)
-- **Website Price**: $10.95
+- **Website Price**: $24.00
 - **Supplier Price**: $2.97
 - **Margin**: $7.98 (73%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2412070355501627400)
 - **Link to QkSource**: [View Product](https://qksource.com/product/elegant-collection-piece-p-2412070355501627400.html)
 
-#### Elegant Collection Piece #5
+#### Soft Cashmere Touch Scarf
 - **Product Thumbnail**: ![Elegant Piece](https://cf.cjdropshipping.com/quick/product/55beaa6d-3079-4590-8845-e3bdfb33e83d.jpg)
-- **Website Price**: $7.95
+- **Website Price**: $24.00
 - **Supplier Price**: $2.03
 - **Margin**: $5.92 (74%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1760130972168761344)
@@ -119,9 +119,9 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 ### Luxury Fashion Bags
 
-#### Luxury Fashion Bag #1
+#### Pink Cloud Puffer Jacket
 - **Product Thumbnail**: ![Luxury Bag](https://cf.cjdropshipping.com/quick/product/db1cd3c6-e9ad-4eda-ae85-c1366ebc7a33.jpg)
-- **Website Price**: $76.95
+- **Website Price**: $79.00
 - **Supplier Price**: $21.89
 - **Margin**: $55.06 (72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2512020833381633000)
@@ -135,33 +135,33 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2511010923041613300)
 - **Link to QkSource**: [View Product](https://qksource.com/product/luxury-fashion-bag-p-2511010923041613300.html)
 
-#### Luxury Fashion Bag #3
+#### Classic Soft Hobo Bag
 - **Product Thumbnail**: ![Luxury Bag](https://cf.cjdropshipping.com/1623910867040.jpg)
-- **Website Price**: $19.95
+- **Website Price**: $39.00
 - **Supplier Price**: $5.64-8.06
 - **Margin**: ~$12-14 (60-72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1405411242029486080)
 - **Link to QkSource**: [View Product](https://qksource.com/product/luxury-fashion-bag-p-1405411242029486080.html)
 
-#### Luxury Fashion Bag #4
+#### Clean White Mini Bag
 - **Product Thumbnail**: ![Luxury Bag](https://cf.cjdropshipping.com/f8aee5a6-b249-4f80-8d6f-4ddce210f194.jpg)
-- **Website Price**: $5.95
+- **Website Price**: $29.00
 - **Supplier Price**: $1.49
 - **Margin**: $4.46 (75%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1672132490384904192)
 - **Link to QkSource**: [View Product](https://qksource.com/product/luxury-fashion-bag-p-1672132490384904192.html)
 
-#### Luxury Fashion Bag #5
+#### Luxe Long Down Coat
 - **Product Thumbnail**: ![Luxury Bag](https://cf.cjdropshipping.com/quick/product/a17ecca0-7c2d-4cf3-ae1e-3f1aa84d54ac.jpg)
-- **Website Price**: $203.95
+- **Website Price**: $99.00
 - **Supplier Price**: $58.04-61.36
 - **Margin**: ~$143-146 (70-72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2511300843381609000)
 - **Link to QkSource**: [View Product](https://qksource.com/product/luxury-fashion-bag-p-2511300843381609000.html)
 
-#### Luxury Fashion Bag #6
+#### Plush Winter Boots
 - **Product Thumbnail**: ![Luxury Bag](https://cf.cjdropshipping.com/quick/product/a9d4814a-e2a9-4db2-a026-0045a781a992.jpg)
-- **Website Price**: $5.95
+- **Website Price**: $29.00
 - **Supplier Price**: $1.59-1.90
 - **Margin**: ~$4-4.36 (68-73%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2512240513531625200)
@@ -171,17 +171,17 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 ### Premium Footwear
 
-#### Premium Footwear #1
+#### Soft Suede Ankle Boots
 - **Product Thumbnail**: ![Footwear](https://cf.cjdropshipping.com/quick/product/e9b5af5a-5a42-4735-867a-6722bb0a27de.jpg)
-- **Website Price**: $29.95
+- **Website Price**: $49.00
 - **Supplier Price**: $8.38
 - **Margin**: $21.57 (72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2512050318251608500)
 - **Link to QkSource**: [View Product](https://qksource.com/product/premium-footwear-p-2512050318251608500.html)
 
-#### Premium Footwear #2
+#### Elegant Slouch Heel Boots
 - **Product Thumbnail**: ![Footwear](https://cf.cjdropshipping.com/quick/product/bd6f7e6a-c819-4bb8-93a0-69d23752131e.jpg)
-- **Website Price**: $35.95
+- **Website Price**: $49.00
 - **Supplier Price**: $10.12
 - **Margin**: $25.83 (72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2601140940251636900)
@@ -195,9 +195,9 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2511280758221607400)
 - **Link to QkSource**: [View Product](https://qksource.com/product/premium-footwear-p-2511280758221607400.html)
 
-#### Premium Footwear #4
+#### Urban Winter Sneakers
 - **Product Thumbnail**: ![Footwear](https://cf.cjdropshipping.com/792ef4c8-7f19-4edd-9350-a92b1cd1d290.jpg)
-- **Website Price**: $18.95
+- **Website Price**: $29.00
 - **Supplier Price**: $5.17
 - **Margin**: $13.78 (73%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1839114473198997504)
@@ -231,17 +231,17 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 ### Accessories
 
-#### Pearl Necklace
+#### Pearl Minimal Necklace
 - **Product Thumbnail**: ![Pearl Necklace](https://cf.cjdropshipping.com/e253a6a5-d58e-4a71-b562-c30334b7b0bd.jpg)
-- **Website Price**: $2.95
+- **Website Price**: $19.00
 - **Supplier Price**: $0.65-0.72
 - **Margin**: ~$2.23-2.30 (76-78%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1578244934304542720)
 - **Link to QkSource**: [View Product](https://qksource.com/product/simple-fashion-pearl-single-layer-necklace-p-1578244934304542720.html)
 
-#### Diamond Tag
+#### Star Charm Necklace
 - **Product Thumbnail**: ![Diamond Tag](https://cf.cjdropshipping.com/796c2321-b752-43b5-a206-fcab8eb6991e.jpg)
-- **Website Price**: $15.00
+- **Website Price**: $24.00
 - **Supplier Price**: $0.93
 - **Margin**: $14.07 (94%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=516732AB-1D5F-49F7-BE3F-17BD08B6945A)
@@ -263,3 +263,47 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 - Most products have margins between **70-78%**
 - Highest margin: Diamond Tag (94%)
 - Lowest margin: Stylish Outerwear #2 (48-72% depending on variant)
+
+---
+
+### New Arrivals
+
+#### Winter Ski Suit - Warm Waterproof Fashion
+- **Product Thumbnail**: ![Ski Suit](https://cf.cjdropshipping.com/17051040/2401130230310320700.jpg)
+- **Website Price**: $99.00
+- **Supplier Price**: N/A
+- **Margin**: N/A
+- **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1745817525838946304)
+- **Link to QkSource**: [View Product](https://qksource.com/product/winter-ski-suit-warm-waterproof-fashion-p-1745817525838946304.html)
+
+#### Women's New Professional Double-board Waterproof Ski Suit
+- **Product Thumbnail**: ![Pro Ski Suit](https://cf.cjdropshipping.com/quick/product/f7ef2a28-9ea5-4840-88f2-7d9f1f53cee8.jpg)
+- **Website Price**: $399.00
+- **Supplier Price**: N/A
+- **Margin**: N/A
+- **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2510040808101612300-tops)
+- **Link to QkSource**: [View Product](https://qksource.com/product/womens-new-professional-double-board-waterproof-ski-suit-p-2510040808101612300.html)
+
+#### Luxe Fox Fur Ear Warmers
+- **Product Thumbnail**: ![Ear Warmers](/product-images/luxe-ear-warmers/01-light-brown.png)
+- **Website Price**: $24.00
+- **Supplier Price**: N/A
+- **Margin**: N/A
+- **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2512230236071631600)
+- **Link to QkSource**: [View Product](https://qksource.com/product/luxe-fox-fur-ear-warmers-p-2512230236071631600.html)
+
+#### Brushed Fleece Leggings
+- **Product Thumbnail**: ![Leggings](https://yefzblyovihrvoqcqjtg.supabase.co/storage/v1/object/public/product-images/leggings-lifestyle-1769869767363.png)
+- **Website Price**: $39.95
+- **Supplier Price**: N/A
+- **Margin**: N/A
+- **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=996BA858-DC7C-4405-9A62-9BF17218E6BE)
+- **Link to QkSource**: [View Product](https://qksource.com/product/thin-brushed-leggings-p-996BA858-DC7C-4405-9A62-9BF17218E6BE.html)
+
+#### Winter Outdoor Body Hoodie Ski Suit Coat Women
+- **Product Thumbnail**: ![Body Ski Suit](https://oss.yesourcing.com/2056/680069992587.png)
+- **Website Price**: $99.00
+- **Supplier Price**: N/A
+- **Margin**: N/A
+- **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=B4158AAB-B1EE-431B-A468-D1BA8085452B-TOP)
+- **Link to QkSource**: TBD

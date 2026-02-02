@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { stripe } from '@/lib/stripe';
-import { supabase } from '@/lib/supabase';
-import { processOrderAutomation } from '@/lib/automation';
+import { supabaseAdmin } from '@/lib/supabase-admin';
 import { sendOrderEmail } from '@/lib/email';
 import Stripe from 'stripe';
 
@@ -33,8 +32,8 @@ export async function POST(request: Request) {
                 expand: ['data.price.product'],
             });
 
-            // Save order to Supabase
-            const { data: order, error: orderError } = await supabase
+            // Save order to Supabase using Admin client to bypass RLS
+            const { data: order, error: orderError } = await supabaseAdmin
                 .from('orders')
                 .insert({
                     stripe_session_id: session.id,
@@ -69,7 +68,6 @@ export async function POST(request: Request) {
                 const product = item.price?.product as Stripe.Product;
 
                 // Handle free gift items
-                // Handle free gift items
                 if (product.metadata?.is_gift === 'true') {
                     // Find the gift item in cart_items metadata to get the selected color
                     const giftCartItem = cartItems.find((ci: any) => ci.is_gift === true);
@@ -84,7 +82,7 @@ export async function POST(request: Request) {
 
                     console.log(`🎁 Processing Gift: ${selectedColor} (CJ ID: ${giftCjVariantId})`);
 
-                    await supabase.from('order_items').insert({
+                    await supabaseAdmin.from('order_items').insert({
                         order_id: order.id,
                         product_id: null, // Gift might not be in our DB
                         quantity: 1,
@@ -100,7 +98,8 @@ export async function POST(request: Request) {
                 }
 
                 // Find product in our database by Stripe product ID
-                const { data: dbProduct } = await supabase
+                // Use Admin client to ensure we can read products if any policies are restrictive (though normally products are public)
+                const { data: dbProduct } = await supabaseAdmin
                     .from('products')
                     .select('id, cj_product_id, variants, supplier')
                     .eq('stripe_product_id', product.id)
@@ -126,7 +125,7 @@ export async function POST(request: Request) {
                     }
                 }
 
-                await supabase.from('order_items').insert({
+                await supabaseAdmin.from('order_items').insert({
                     order_id: order.id,
                     product_id: dbProduct?.id,
                     quantity: item.quantity || 1,
@@ -154,7 +153,7 @@ export async function POST(request: Request) {
 
             // Mark abandoned checkout as recovered
             if (session.customer_details?.email) {
-                await supabase
+                await supabaseAdmin
                     .from('abandoned_checkouts')
                     .update({ status: 'recovered', updated_at: new Date().toISOString() })
                     .eq('email', session.customer_details.email);
