@@ -71,14 +71,14 @@ export async function sendOrderEmail(order: EmailOrder, items: EmailOrderItem[])
     }).join('');
 
     // Format Address
-    const addr = order.shipping_address;
+    const addr = order.shipping_address || {};
     const addressHtml = `
         <p>
             ${order.customer_name || 'Customer'}<br>
-            ${addr.line1}<br>
+            ${addr.line1 || ''}<br>
             ${addr.line2 ? addr.line2 + '<br>' : ''}
-            ${addr.city}, ${addr.state} ${addr.postal_code}<br>
-            ${addr.country}
+            ${addr.city || ''}, ${addr.state || ''} ${addr.postal_code || ''}<br>
+            ${addr.country || ''}
         </p>
     `;
 
