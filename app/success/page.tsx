@@ -2,65 +2,55 @@ import Link from 'next/link';
 
 export default function SuccessPage() {
     return (
-        <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
-            <div className="text-center space-y-6 p-8 max-w-md">
-                {/* Success Icon */}
-                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center animate-bounce">
-                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+        <div className="min-h-screen flex items-center justify-center bg-stone-50 p-4">
+            <div className="bg-white max-w-lg w-full rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-8 md:p-12 text-center border border-stone-100">
+
+                {/* Elegant Success Animation */}
+                <div className="w-20 h-20 mx-auto bg-stone-100 rounded-full flex items-center justify-center mb-8 animate-fade-in-up">
+                    <svg className="w-8 h-8 text-stone-800" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                 </div>
 
-                <h1 className="text-4xl md:text-5xl font-light text-white">
-                    Thank you!
+                <h1 className="text-4xl font-serif text-stone-900 mb-4 tracking-tight">
+                    Thank you
                 </h1>
 
-                <div className="space-y-2">
-                    <p className="text-stone-300 text-lg">
-                        Your order has been placed successfully.
-                    </p>
-                    <p className="text-stone-500 text-sm">
-                        You will receive an email confirmation shortly with your order details and tracking information.
-                    </p>
-                </div>
+                <p className="text-stone-600 text-lg font-sans leading-relaxed mb-8">
+                    Your order has been placed successfully.<br />
+                    A confirmation email is on its way.
+                </p>
 
-                {/* Order Info Card */}
-                <div className="bg-white/5 rounded-2xl p-6 border border-white/10 text-left space-y-3">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center">
-                            <span className="text-lg">📦</span>
-                        </div>
+                {/* Info Card */}
+                <div className="bg-stone-50 rounded-2xl p-6 border border-stone-100 text-left mb-8 space-y-4">
+                    <div className="flex items-start gap-4">
+                        <div className="p-2 bg-white rounded-full shadow-sm text-lg">📦</div>
                         <div>
-                            <p className="text-white font-medium">Order Processing</p>
-                            <p className="text-stone-500 text-sm">1-3 business days</p>
+                            <p className="text-stone-900 font-medium font-serif">Order Processing</p>
+                            <p className="text-stone-500 text-sm font-sans">1-3 business days</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                            <span className="text-lg">🚚</span>
-                        </div>
+                    <div className="flex items-start gap-4">
+                        <div className="p-2 bg-white rounded-full shadow-sm text-lg">🚚</div>
                         <div>
-                            <p className="text-white font-medium">Free Shipping</p>
-                            <p className="text-stone-500 text-sm">7-15 business days</p>
+                            <p className="text-stone-900 font-medium font-serif">Estimated Delivery</p>
+                            <p className="text-stone-500 text-sm font-sans">7-15 business days</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="pt-6">
+                <div className="space-y-4">
                     <Link
                         href="/"
-                        className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black rounded-full font-medium hover:bg-amber-100 transition-all duration-300 hover:scale-105"
+                        className="block w-full py-4 bg-stone-900 text-white rounded-full font-medium hover:bg-stone-800 transition-all duration-300 font-sans shadow-lg shadow-stone-900/10 hover:shadow-stone-900/20 transform hover:-translate-y-0.5"
                     >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
                         Continue Shopping
                     </Link>
-                </div>
 
-                <p className="text-stone-600 text-xs">
-                    Questions? Contact us at support@cozy.com
-                </p>
+                    <p className="text-stone-400 text-xs font-sans mt-8">
+                        Questions? Contact us at support@atelierdouce.shop
+                    </p>
+                </div>
             </div>
         </div>
     );
