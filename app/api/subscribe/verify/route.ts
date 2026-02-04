@@ -62,6 +62,19 @@ export async function GET(request: Request) {
                                 <p style="font-size: 13px; color: #5e5e5e; margin: 0;">($5 OFF your total order)</p>
                             </div>
 
+                            <div style="margin: 30px 0; padding: 20px; background-color: #f9f9f9; border-radius: 8px;">
+                                <h3 style="font-family: 'Playfair Display', serif; font-size: 20px; color: #171717; margin-bottom: 15px;">Trending This Week</h3>
+                                <p style="margin-bottom: 10px;">Check out our latest favorites:</p>
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    <li style="margin-bottom: 10px;">
+                                        <a href="https://www.atelierdouce.shop/product/microfiber-casual-shoes" style="color: #a48354; text-decoration: none; font-weight: 500;">👢 Microfiber Casual Shoes &rarr;</a>
+                                    </li>
+                                    <li style="margin-bottom: 10px;">
+                                        <a href="https://www.atelierdouce.shop/product/soft-cashmere-touch-scarf" style="color: #a48354; text-decoration: none; font-weight: 500;">🧣 Soft Cashmere Touch Scarf &rarr;</a>
+                                    </li>
+                                </ul>
+                            </div>
+
                             <div style="margin-top: 30px;">
                                 <a href="https://www.atelierdouce.shop" class="btn">
                                     Shop the Collection

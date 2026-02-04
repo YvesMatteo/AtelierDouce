@@ -33,14 +33,14 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 #### Paris Short Elegant Coat
 - **Product Thumbnail**: ![Short Coat](https://cf.cjdropshipping.com/be3d5dc1-fa31-4580-907a-e97a41de7c73.jpg)
-- **Website Price**: $39.00
+- **Website Price**: $44.00
 - **Supplier Price**: $19.15
 - **Margin**: $48.80 (72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=1626869424990990336)
 - **Link to QkSource**: [View Product](https://qksource.com/product/short-coat-p-1626869424990990336.html)
 
 #### Navy Cloud Puffer Jacket
-- **Product Thumbnail**: ![Stylish Outerwear](https://cf.cjdropshipping.com/quick/product/e9635d77-66d4-4d1a-8f97-e0dc63a52ac5.jpg)
+- **Product Thumbnail**: ![Stylish Outerwear](https://cf.cjdropshipping.com/quick/product/26d11536-8175-4bf4-a58b-8a34e37c779a.jpg)
 - **Website Price**: $89.00
 - **Supplier Price**: $11.11-14.10
 - **Margin**: ~$25-28 (64-71%)
@@ -153,7 +153,7 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 #### Luxe Long Down Coat
 - **Product Thumbnail**: ![Luxury Bag](https://cf.cjdropshipping.com/quick/product/a17ecca0-7c2d-4cf3-ae1e-3f1aa84d54ac.jpg)
-- **Website Price**: $99.00
+- **Website Price**: $114.00
 - **Supplier Price**: $58.04-61.36
 - **Margin**: ~$143-146 (70-72%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2511300843381609000)
@@ -278,7 +278,7 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 #### Women's New Professional Double-board Waterproof Ski Suit
 - **Product Thumbnail**: ![Pro Ski Suit](https://cf.cjdropshipping.com/quick/product/f7ef2a28-9ea5-4840-88f2-7d9f1f53cee8.jpg)
-- **Website Price**: $399.00
+- **Website Price**: $459.00
 - **Supplier Price**: N/A
 - **Margin**: N/A
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2510040808101612300-tops)
@@ -306,4 +306,20 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 - **Supplier Price**: N/A
 - **Margin**: N/A
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=B4158AAB-B1EE-431B-A468-D1BA8085452B-TOP)
-- **Link to QkSource**: TBD
+- **Link to QkSource**: [View Product](https://qksource.com/product/winter-outdoor-body-hoodie-ski-suit-coat-women-p-B4158AAB-B1EE-431B-A468-D1BA8085452B.html)
+
+#### Microfiber Casual Shoes
+- **Product Thumbnail**: ![Microfiber Shoes](https://cf.cjdropshipping.com/quick/product/016908ff-be6e-470d-820a-a2cff70a62f6.jpg)
+- **Website Price**: .95
+- **Supplier Price**: .84
+- **Margin**: .11 (72%)
+- **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2511050858251614900)
+- **Link to QkSource**: [View Product](https://qksource.com/product/autumn-western-pleated-short-single-womens-pile-style-boots-p-2511050858251614900.html)
+
+#### Soft Cashmere Touch Scarf
+- **Product Thumbnail**: ![Scarf](https://cf.cjdropshipping.com/quick/product/6dc02324-ae3e-4b77-aa06-369becb6eaa9.jpg)
+- **Website Price**: .00
+- **Supplier Price**: .03
+- **Margin**: .97 (92%)
+- **Link to CJ Dropshipping**: TBD
+- **Link to QkSource**: [View Product](https://qksource.com/product/fashion-plaid-scarf-for-women-p-1760130972168761344.html)

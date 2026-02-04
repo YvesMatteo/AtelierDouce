@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     }
 
     try {
-        const { email, source = 'unknown' } = await request.json();
+        const { email, source = 'unknown', cartItems } = await request.json();
 
         if (!email || !email.includes('@')) {
             return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
@@ -31,6 +31,26 @@ export async function POST(request: Request) {
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
             process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
+
+        // If cart items are present, save as abandoned/potential order
+        if (cartItems && Array.isArray(cartItems) && cartItems.length > 0) {
+            try {
+                await supabase
+                    .from('abandoned_checkouts')
+                    .upsert({
+                        email,
+                        cart_items: cartItems,
+                        status: 'abandoned',
+                        email_sent: false, // Reset this so they get the abandonment email too
+                        updated_at: new Date().toISOString()
+                    }, {
+                        onConflict: 'email'
+                    });
+            } catch (err) {
+                console.error('Error saving cart from subscription:', err);
+                // Continue with subscription even if this fails
+            }
+        }
 
         // Check if subscriber already exists and is verified
         const { data: existingSubscriber } = await supabase

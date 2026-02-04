@@ -10,15 +10,16 @@ const supabase = createClient(
 async function sendAbandonmentEmails() {
     console.log('🚀 Checking for abandoned checkouts...');
 
-    // Find "abandoned" records created > 1 hour ago that haven't received an email yet
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    // Find "abandoned" records updated > 30 minutes ago that haven't received an email yet
+    // Using updated_at ensures we don't email them while they are still actively shopping
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
 
     const { data: abandoned, error } = await supabase
         .from('abandoned_checkouts')
         .select('*')
         .eq('status', 'abandoned')
         .eq('email_sent', false)
-        .lt('created_at', oneHourAgo);
+        .lt('updated_at', thirtyMinutesAgo);
 
     if (error) {
         console.error('❌ Error fetching abandoned checkouts:', error);

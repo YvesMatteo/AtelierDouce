@@ -8,7 +8,7 @@ import { calculateDiscount } from '@/lib/discount';
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { items } = body; // Expecting { items: [{ productId, quantity, selectedOptions }] }
+        const { items, email } = body; // Expecting { items: [{ productId, quantity, selectedOptions }], email?: string }
 
         if (!items || !Array.isArray(items) || items.length === 0) {
             return NextResponse.json({ error: 'No items in cart' }, { status: 400 });
@@ -24,6 +24,33 @@ export async function POST(request: Request) {
 
         const lineItems = [];
         const metadataItems: any[] = [];
+
+        // Save Abandoned Checkout if email is provided
+        if (email) {
+            try {
+                // Construct cart items for storage (simplified version of what logic below does, but we need it now)
+                // We'll trust the client passed items for the "cart_items" field in DB, 
+                // or easier: just allow the client to pass the raw items structure to be saved.
+                // However, detailed info is better. 
+                // Let's just use the incoming `items` array for now, as it contains productId, quantity, options.
+                // We'll rely on the existing items structure.
+
+                await supabase
+                    .from('abandoned_checkouts')
+                    .upsert({
+                        email,
+                        cart_items: items, // Save the raw items from request
+                        status: 'abandoned',
+                        email_sent: false,
+                        updated_at: new Date().toISOString()
+                    }, {
+                        onConflict: 'email'
+                    });
+            } catch (err) {
+                console.error('Error saving abandoned checkout:', err);
+                // Don't block checkout if this fails
+            }
+        }
 
         for (const item of items) {
             const { productId, quantity = 1, selectedOptions } = item;
@@ -173,6 +200,7 @@ export async function POST(request: Request) {
         const shippingAmount = isZeroDecimal ? shippingCostTargetCurrency : Math.round(shippingCostTargetCurrency * 100);
 
         const session = await stripe.checkout.sessions.create({
+            customer_email: email, // Pre-fill email if provided
             payment_method_types: ['card'],
             payment_method_options: {
                 card: {

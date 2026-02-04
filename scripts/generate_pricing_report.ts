@@ -62,12 +62,40 @@ function parseExistingLinks() {
     return productsByImage;
 }
 
+
+// Fallback prices for products with missing data
+const FALLBACK_PRICES: Record<string, number> = {
+    'Winter Outdoor Body Hoodie Ski Suit Coat Women': 17.00,
+    "Women's New Professional Double-board Waterproof Ski Suit": 280.00
+};
+
 function calculateMargin(sellPrice: number, costPrice: number) {
     const margin = sellPrice - costPrice;
     const marginPercent = (margin / sellPrice) * 100;
     return {
         amount: margin.toFixed(2),
         percent: marginPercent.toFixed(0)
+    };
+}
+
+function calculateCombinedMargin(sellPrice: number, costPrice: number) {
+    // Scenario: Buy 4 items
+    // 1 item: Free ($0 revenue)
+    // 2 items: 15% off (85% revenue)
+    // 1 item: Full price (100% revenue)
+    // Total Revenue Unit Equivalent = 0 + 0.85 + 0.85 + 1 = 2.7 units
+
+    const totalRevenue = sellPrice * 2.7;
+    const totalCost = costPrice * 4;
+
+    const margin = totalRevenue - totalCost;
+    const marginPercent = (margin / totalRevenue) * 100;
+
+    return {
+        revenue: totalRevenue.toFixed(2),
+        cost: totalCost.toFixed(2),
+        amount: margin.toFixed(2),
+        percent: marginPercent.toFixed(1)
     };
 }
 
@@ -89,8 +117,9 @@ async function main() {
 
     // 3. Build Report Content
     let reportContent = `# Product Pricing Analysis\n\nGenerated on: ${new Date().toLocaleString()}\n\n`;
-    reportContent += `| # | Image | Product Name | Sell Price | Supplier Cost (CJ) | Margin | QkSource Link |\n`;
-    reportContent += `| :---: | :---: | :--- | :--- | :--- | :--- | :--- |\n`;
+    reportContent += `**Combined Scenario:** Buy 4 items (1 Free, 2 @ 15% Off, 1 Full Price)\n\n`;
+    reportContent += `| # | Image | Product Name | Sell Price | Supplier Cost (CJ) | Margin | Combined Margin | QkSource Link |\n`;
+    reportContent += `| :---: | :---: | :--- | :--- | :--- | :--- | :--- | :--- |\n`;
 
     let index = 1;
     for (const product of dbProducts) {
@@ -114,11 +143,17 @@ async function main() {
                         const minPrice = Math.min(...prices);
                         const maxPrice = Math.max(...prices);
                         costValue = minPrice;
+                        // For calculation, take MAX price if range to be conservative? 
+                        // Or just min? User script earlier used MAX. 
+                        // Let's settle on MAX for conservative margin calc, but display range.
+                        const conservativeCost = maxPrice;
+                        costValue = conservativeCost;
+
                         supplierCost = prices.length > 1 && minPrice !== maxPrice
                             ? `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`
                             : `$${minPrice.toFixed(2)}`;
                         apiSuccess = true;
-                        console.log(`✅ $${minPrice}`);
+                        console.log(`✅ $${minPrice} (using Max $${maxPrice} for calc)`);
                     }
                 }
             } catch (e: any) {
@@ -136,7 +171,13 @@ async function main() {
 
         // If API failed or returned nothing useful, try manual price
         if (costValue === 0) {
-            if (extraData?.supplierPrice) {
+            // Check hardcoded fallbacks first
+            if (FALLBACK_PRICES[product.name]) {
+                costValue = FALLBACK_PRICES[product.name];
+                supplierCost = `$${costValue.toFixed(2)}`;
+                note = '(Est.)';
+                console.log(`   Detailed fallback: Using Estimate $${costValue}`);
+            } else if (extraData?.supplierPrice) {
                 supplierCost = extraData.supplierPrice;
                 const matches = supplierCost.match(/(\d+\.?\d*)/);
                 if (matches) {
@@ -149,17 +190,29 @@ async function main() {
 
         // Margin Calc
         let marginDisplay = 'N/A';
+        let combinedMarginDisplay = 'N/A';
+
         if (costValue > 0 && product.price) {
             const m = calculateMargin(product.price, costValue);
             marginDisplay = `$${m.amount} (${m.percent}%)`;
+
+            const cm = calculateCombinedMargin(product.price, costValue);
+            combinedMarginDisplay = `**$${cm.amount}** (${cm.percent}%)`;
         }
 
         // QkSource Link & Image
         const qkLink = extraData?.qkLink ? `[Link](${extraData.qkLink})` : '-';
-        const image = product.images?.[0] ? `<img src="${product.images[0]}" width="100"/>` : 'No Image';
+
+        let imageSrc = product.images?.[0] || '';
+        if (imageSrc.startsWith('/')) {
+            // Resolve local public path to absolute path for Artifact viewer
+            imageSrc = `${process.cwd()}/public${imageSrc}`;
+        }
+
+        const image = imageSrc ? `<img src="${imageSrc}" width="100"/>` : 'No Image';
 
         // Add to Table
-        reportContent += `| ${index} | ${image} | **${product.name}** | $${product.price} | ${supplierCost} ${note} | ${marginDisplay} | ${qkLink} |\n`;
+        reportContent += `| ${index} | ${image} | **${product.name}** | $${product.price} | ${supplierCost} ${note} | ${marginDisplay} | ${combinedMarginDisplay} | ${qkLink} |\n`;
         index++;
     }
 

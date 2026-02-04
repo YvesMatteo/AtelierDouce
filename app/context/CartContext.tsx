@@ -121,6 +121,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
                     const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.pushState({ path: newUrl }, '', newUrl);
                     console.log('✅ Cart recovered successfully!');
+
+                    // Also restore email if possible? API doesn't return it currently, but maybe we should.
+                    // For now, we rely on them re-entering or if they clicked a link with token, etc.
                 }
             } catch (err) {
                 console.error('Failed to recover cart:', err);
@@ -131,6 +134,40 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             handleRecovery();
         }
     }, [isLoaded]);
+
+    // --- Continuous Abandonment Sync ---
+    useEffect(() => {
+        if (!isLoaded || cartItems.length === 0) return;
+
+        const syncAbandonment = async () => {
+            const email = localStorage.getItem('user_email');
+            if (!email) return;
+
+            try {
+                await fetch('/api/abandonment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email,
+                        cartItems: cartItems.map(item => ({
+                            productId: item.productId,
+                            name: item.name,
+                            price: item.price,
+                            quantity: item.quantity,
+                            selectedOptions: item.selectedOptions,
+                            image: item.image
+                        }))
+                    })
+                });
+            } catch (e) {
+                // Silent fail is fine, we don't want to disrupt user
+                console.error('Failed to sync cart abandonment state', e);
+            }
+        };
+
+        const timeoutId = setTimeout(syncAbandonment, 2000); // Debounce 2s to avoid spamming API on every quantity change
+        return () => clearTimeout(timeoutId);
+    }, [cartItems, isLoaded]);
 
 
     const addToCart = (newItem: CartItem) => {

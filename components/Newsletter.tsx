@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/currency';
+import { useCart } from '../app/context/CartContext';
 
 interface NewsletterProps {
     rate?: number;
@@ -9,6 +10,7 @@ interface NewsletterProps {
 }
 
 const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
+    const { cartItems } = useCart();
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'already_subscribed'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
@@ -22,7 +24,18 @@ const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
             const res = await fetch('/api/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, source: 'community' }),
+                body: JSON.stringify({
+                    email,
+                    source: 'community',
+                    cartItems: cartItems.length > 0 ? cartItems.map(item => ({
+                        productId: item.productId,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        selectedOptions: item.selectedOptions,
+                        image: item.image
+                    })) : undefined
+                }),
             });
 
             const data = await res.json();
@@ -33,8 +46,10 @@ const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
 
             if (data.already_subscribed) {
                 setStatus('already_subscribed');
+                localStorage.setItem('user_email', email);
             } else {
                 setStatus('success');
+                localStorage.setItem('user_email', email);
             }
             setEmail('');
         } catch (err: any) {

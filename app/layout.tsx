@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Analytics } from "@vercel/analytics/react";
 import { Ovo, Nunito_Sans } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
@@ -73,6 +74,7 @@ export default function RootLayout({
         <TikTokPixel />
         <GoogleAnalytics />
         <CookieConsent />
+        <Analytics />
       </body>
     </html>
   );

@@ -3,7 +3,7 @@
 import { X, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useCart } from '../app/context/CartContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import DiscountProgress from './DiscountProgress';
 import { useTikTokPixel } from '@/hooks/useTikTokPixel';
@@ -27,6 +27,22 @@ export default function CartDrawer() {
     const [isCheckingOut, setIsCheckingOut] = useState(false);
     const [email, setEmail] = useState('');
     const { trackInitiateCheckout } = useTikTokPixel();
+
+    // Load saved email if available
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('user_email');
+        if (savedEmail) setEmail(savedEmail);
+    }, []);
+
+    // Save email to local storage for continuous sync
+    useEffect(() => {
+        if (email && email.includes('@')) {
+            const timer = setTimeout(() => {
+                localStorage.setItem('user_email', email);
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [email]);
 
     const currencyCode = cartItems.length > 0 && cartItems[0].currency ? cartItems[0].currency : 'USD';
     const currencySymbol = currencyCode === 'USD' ? '$'
@@ -57,31 +73,13 @@ export default function CartDrawer() {
         }
 
         try {
-            // If email is provided, save abandonment state and subscribe to newsletter
-            // We use Promise.allSettled to ensure checkout proceeds even if these fail
+            // If email is provided, subscribe to newsletter (optional)
             if (email && email.includes('@')) {
-                await Promise.allSettled([
-                    fetch('/api/abandonment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            email,
-                            cartItems: cartItems.map(item => ({
-                                productId: item.productId,
-                                name: item.name,
-                                price: item.price,
-                                quantity: item.quantity,
-                                selectedOptions: item.selectedOptions,
-                                image: item.image
-                            }))
-                        })
-                    }),
-                    fetch('/api/subscribe', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email, source: 'checkout' })
-                    })
-                ]);
+                fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, source: 'checkout' })
+                }).catch(err => console.error('Subscription error:', err));
             }
 
             const response = await fetch('/api/checkout', {
@@ -96,6 +94,7 @@ export default function CartDrawer() {
                         selectedOptions: item.selectedOptions,
                     })),
                     currency: currencyCode, // Pass the currency
+                    email: email || undefined, // Pass email for abandonment/pre-fill
                 }),
             });
 
