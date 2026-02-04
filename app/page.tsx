@@ -171,7 +171,7 @@ export default async function Home(props: HomeProps) {
       {!category && (
         <section className="py-12 px-6 md:px-12 max-w-3xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-serif text-gray-900 mb-6 relative z-10">
-            The Art of Bourgeois
+            The Art of Bourgeoisie
           </h1>
           <div className="w-12 h-[1px] bg-[#a48354] mx-auto mb-8"></div>
           <p className="text-[#5e5e5e] leading-loose font-light text-lg mb-6">
