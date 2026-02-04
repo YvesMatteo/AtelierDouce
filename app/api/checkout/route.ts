@@ -176,17 +176,28 @@ export async function POST(request: Request) {
         }
 
         // --- Calculate Shipping ---
+        // Free shipping on orders over $100, otherwise:
         // $7.00 for the first product, $5.00 for each additional product
         let totalShippingItems = 0;
+        let cartSubtotalUSD = 0;
+
         for (const item of lineItems) {
             // Exclude free gifts (unit_amount === 0) from shipping count
             if (item.price_data.unit_amount > 0) {
                 totalShippingItems += item.quantity;
+                // Calculate USD subtotal (convert back from target currency)
+                const itemPriceUSD = (item.price_data.unit_amount / (currencyCode === 'JPY' ? 1 : 100)) / rate;
+                cartSubtotalUSD += itemPriceUSD * item.quantity;
             }
         }
 
         let shippingCostUSD = 0;
-        if (totalShippingItems > 0) {
+        const FREE_SHIPPING_THRESHOLD = 100; // $100 USD
+
+        if (cartSubtotalUSD >= FREE_SHIPPING_THRESHOLD) {
+            // Free shipping for orders over $100
+            shippingCostUSD = 0;
+        } else if (totalShippingItems > 0) {
             // Cap the billable additional items so that shipping stops increasing after 3 products
             // 1 item: $7
             // 2 items: $12
@@ -232,7 +243,7 @@ export async function POST(request: Request) {
                             amount: shippingAmount,
                             currency: currencyCode.toLowerCase(),
                         },
-                        display_name: 'Standard Shipping',
+                        display_name: shippingCostUSD === 0 ? 'Free Shipping' : 'Standard Shipping',
                         delivery_estimate: {
                             minimum: {
                                 unit: 'business_day',
