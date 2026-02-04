@@ -30,14 +30,15 @@ export default function ProductActions({ product, currentPrice, currencyCode }: 
     useEffect(() => {
         const initialSelections: Record<string, string> = {};
         product.options?.forEach(opt => {
-            if (opt.values.length === 1) {
+            // Auto-select if only 1 option OR if it's the hidden Style option for the leggings
+            if (opt.values.length === 1 || (product.id === 'd9e478e7-2e72-4b34-987f-7fed63572326' && opt.name === 'Style')) {
                 initialSelections[opt.name] = opt.values[0];
             }
         });
         if (Object.keys(initialSelections).length > 0) {
             setSelectedOptions(prev => ({ ...prev, ...initialSelections }));
         }
-    }, [product.options]);
+    }, [product.options, product.id]);
 
     // Find the matching variant when options change
     useEffect(() => {
@@ -70,30 +71,39 @@ export default function ProductActions({ product, currentPrice, currencyCode }: 
     return (
         <div className="space-y-6">
             {/* Dynamic Option Selectors */}
-            {product.options?.map((option) => (
-                <div key={option.name}>
-                    <div className="flex justify-between items-center mb-3">
-                        <label className="text-[13px] font-bold uppercase tracking-wider text-[#171717]">
-                            {option.name}
-                        </label>
+            {/* Dynamic Option Selectors */}
+            {product.options?.map((option) => {
+                // HACK: Hide "Style" option for Brushed Fleece Leggings (d9e478e7...) as requested
+                // We still need the logic to select it (which happens in useEffect), but we hide the UI.
+                if (product.id === 'd9e478e7-2e72-4b34-987f-7fed63572326' && option.name === 'Style') {
+                    return null;
+                }
 
+                return (
+                    <div key={option.name}>
+                        <div className="flex justify-between items-center mb-3">
+                            <label className="text-[13px] font-bold uppercase tracking-wider text-[#171717]">
+                                {option.name}
+                            </label>
+
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {option.values.map((val) => (
+                                <button
+                                    key={val}
+                                    onClick={() => handleOptionSelect(option.name, val)}
+                                    className={`h-10 px-6 border text-sm transition-all duration-200 min-w-[3rem] ${selectedOptions[option.name] === val
+                                        ? 'border-[#171717] bg-[#171717] text-white'
+                                        : 'border-[#e5e5e5] hover:border-[#171717] hover:bg-[#171717] hover:text-white'
+                                        }`}
+                                >
+                                    {val}
+                                </button>
+                            ))}
+                        </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
-                        {option.values.map((val) => (
-                            <button
-                                key={val}
-                                onClick={() => handleOptionSelect(option.name, val)}
-                                className={`h-10 px-6 border text-sm transition-all duration-200 min-w-[3rem] ${selectedOptions[option.name] === val
-                                    ? 'border-[#171717] bg-[#171717] text-white'
-                                    : 'border-[#e5e5e5] hover:border-[#171717] hover:bg-[#171717] hover:text-white'
-                                    }`}
-                            >
-                                {val}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            ))}
+                );
+            })}
 
             {/* Validation Message */}
             {!isSelectionComplete && missingOptions.length > 0 && Object.keys(selectedOptions).length > 0 && (
