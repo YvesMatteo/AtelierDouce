@@ -1,8 +1,15 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
+import TikTokPurchaseTracker from '@/components/TikTokPurchaseTracker';
 
 export default function SuccessPage() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-stone-50 p-4">
+            {/* TikTok Purchase Event Tracker */}
+            <Suspense fallback={null}>
+                <TikTokPurchaseTracker />
+            </Suspense>
+
             <div className="bg-white max-w-lg w-full rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] p-8 md:p-12 text-center border border-stone-100">
 
                 {/* Elegant Success Animation */}
@@ -55,3 +62,4 @@ export default function SuccessPage() {
         </div>
     );
 }
+

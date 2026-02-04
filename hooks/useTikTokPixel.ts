@@ -52,10 +52,30 @@ export const useTikTokPixel = () => {
         });
     }, []);
 
+    const trackPurchase = useCallback((order: {
+        orderId?: string;
+        value: number;
+        currency?: string;
+        contents?: { id: string; name: string; price: number; quantity: number }[]
+    }) => {
+        trackTikTokEvent('Purchase', {
+            contents: order.contents?.map(item => ({
+                content_id: item.id,
+                content_type: 'product',
+                content_name: item.name,
+                price: item.price,
+                quantity: item.quantity
+            })),
+            value: order.value,
+            currency: order.currency || 'USD'
+        });
+    }, []);
+
     return {
         trackViewContent,
         trackAddToCart,
         trackInitiateCheckout,
-        trackSearch
+        trackSearch,
+        trackPurchase
     };
 };
