@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import ProductActions from '@/components/ProductActions';
 import Link from 'next/link';
 import { Product } from '@/lib/types';
+import Newsletter from '@/components/Newsletter';
 import { headers } from 'next/headers';
 import { getCurrencyForCountry, calculatePrice, formatPrice, BASE_PRICE_USD } from '@/lib/currency';
 import type { Metadata } from 'next';
@@ -202,6 +203,7 @@ export default async function ProductPage({ params }: PageProps) {
                     </div>
                 </div>
             </div>
+            <Newsletter rate={rate} code={code} />
         </div>
     );
 }

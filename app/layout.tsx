@@ -52,11 +52,21 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://atelierdouce.shop'),
 };
 
-export default function RootLayout({
+import { headers } from 'next/headers';
+import { getCurrencyForCountry } from '@/lib/currency';
+import StickyNewsletter from '@/components/StickyNewsletter';
+
+// ... imports
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const country = headersList.get('x-vercel-ip-country') || 'US';
+  const { code, rate } = getCurrencyForCountry(country);
+
   return (
     <html lang="en" className={`${ovo.variable} ${nunitoSans.variable}`}>
       <body className="font-sans antialiased text-[#171717] bg-white">
@@ -71,6 +81,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </Providers>
+        <StickyNewsletter rate={rate} code={code} />
         <TikTokPixel />
         <GoogleAnalytics />
         <CookieConsent />
