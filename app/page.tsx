@@ -174,10 +174,17 @@ export default async function Home(props: HomeProps) {
             The Art of Bourgeois
           </h1>
           <div className="w-12 h-[1px] bg-[#a48354] mx-auto mb-8"></div>
-          <p className="text-[#5e5e5e] leading-loose font-light text-[15px]">
-            Discover our curated collection of premium accessories and winter wear. Designed for those who appreciate
-            minimalist aesthetics without compromising on warmth and comfort.
+          <p className="text-[#5e5e5e] leading-loose font-light text-lg mb-6">
+            Join our community and get a <span className="font-semibold text-[#a48354]">{formatPrice(5 * rate, code)} gift card</span>.
           </p>
+          <div className="mt-8">
+            <Link
+              href="#newsletter"
+              className="inline-block px-10 py-4 bg-[#171717] text-white text-[13px] font-bold tracking-[0.15em] uppercase hover:bg-[#a48354] transition-colors duration-300"
+            >
+              Join Our Community
+            </Link>
+          </div>
         </section>
       )}
 

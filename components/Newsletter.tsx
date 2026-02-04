@@ -7,9 +7,18 @@ import { useCart } from '../app/context/CartContext';
 interface NewsletterProps {
     rate?: number;
     code?: string;
+    id?: string;
+    className?: string;
+    variant?: 'default' | 'minimal';
 }
 
-const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
+const Newsletter: React.FC<NewsletterProps> = ({
+    rate = 1,
+    code = 'USD',
+    id = "newsletter",
+    className = "py-32 bg-[#faf2e6] scroll-mt-24",
+    variant = 'default'
+}) => {
     const { cartItems } = useCart();
     const [email, setEmail] = useState('');
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'already_subscribed'>('idle');
@@ -59,7 +68,7 @@ const Newsletter: React.FC<NewsletterProps> = ({ rate = 1, code = 'USD' }) => {
     };
 
     return (
-        <section id="newsletter" className="py-32 bg-[#faf2e6] scroll-mt-24">
+        <section id={id} className={className}>
             <div className="max-w-2xl mx-auto px-6 text-center">
                 <h2 className="text-3xl font-serif mb-6">Join Our Community</h2>
                 <p className="text-[#5e5e5e] text-lg mb-10 leading-relaxed">
