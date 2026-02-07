@@ -5,11 +5,7 @@ import Stripe from 'stripe';
 
 const PRODUCTS_TO_UPDATE = [
     {
-        id: '2501070601131628700', // Winter Coat Warm Lapel...
-        newPrice: 69.00
-    },
-    {
-        id: '013894EA-BB3F-40BF-BCCE-61751D3ED6E4', // Artificial Fur Coat Jacket
+        id: 'faux-fur-coat-2026', // Luxurious Faux Fur Coat
         newPrice: 69.00
     }
 ];
