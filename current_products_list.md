@@ -28,3 +28,6 @@
 | d1cf713c-5d86-4537-a5a4-8d7f4927f672 | Winter Ski Suit - Warm Waterproof Fashion | Clothing | Stay warm and stylish on the slopes with our Premi... | 2401130230310320700.jpg |
 | e7477ef0-0447-4620-a659-89454bbc8b86 | Women's New Professional Double-board Waterproof Ski Suit | Bottoms | Women's New Professional Double-board Waterproof S... | f7ef2a28-9ea5-4840-88f2-7d9f1f53cee8.jpg |
 | 34988096-a412-4c9f-ac0c-8db9d3701793 | Women's New Professional Double-board Waterproof Ski Suit | Tops | Women's New Professional Double-board Waterproof S... | f7ef2a28-9ea5-4840-88f2-7d9f1f53cee8.jpg |
+| faux-fur-coat-2026 | Luxurious Faux Fur Coat | Clothing | Elevate your winter wardrobe with this stunning Lu... | faux-fur-coat-1.jpg |
+
+| 2501070601131628700 | Winter Coat Warm Lapel Long Fluffy Faux Fur Coat | Clothing | Winter Coat Warm Lapel Long Fluffy Faux Fur Coat Women. | 215ecd8a-6c18-42e0-ae7a-11531bd0c9bc.jpg |
