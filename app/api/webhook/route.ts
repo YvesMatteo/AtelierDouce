@@ -12,16 +12,24 @@ export async function POST(request: Request) {
 
     try {
         const secret = process.env.STRIPE_WEBHOOK_SECRET || '';
-        console.log(`🔑 Webhook Secret config: ${secret.substring(0, 10)}... (Length: ${secret.length})`);
-        console.log(`📨 Received Signature: ${signature ? signature.substring(0, 10) + '...' : 'MISSING'}`);
+        console.log(`🔑 Secret: ${secret.substring(0, 10)}... (Length: ${secret.length})`);
+        console.log(`📨 Signature: ${signature}`);
+        console.log(`📦 Body Length: ${body.length}`);
+
+        if (!body || body.length === 0) {
+            console.error('❌ Body is empty!');
+            return NextResponse.json({ error: 'Empty Body' }, { status: 400 });
+        }
 
         event = stripe.webhooks.constructEvent(
             body,
             signature,
-            secret
+            secret.trim() // Ensure no whitespace
         );
     } catch (err: any) {
-        console.error('Webhook signature verification failed:', err.message);
+        console.error(`❌ Verification Failed: ${err.message}`);
+        console.error(`   - Secret Used: ${process.env.STRIPE_WEBHOOK_SECRET?.substring(0, 5)}...`);
+        console.error(`   - Signature Header: ${signature}`);
         return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
     }
 
