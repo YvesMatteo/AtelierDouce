@@ -10,10 +10,12 @@ const PRODUCT = {
     description: "Artificial Fur Coat Jacket. Style: Light cooking. Fabric composition: Artificial fur. Available in multiple colors including Pink, Grey, Light tan, Light grey, White, Brown, Deep coffee color, Black.",
     price: 49.95,
     images: [
+        "/products/artificial-fur-coat/0.jpg",
         "/products/artificial-fur-coat/1.jpg",
         "/products/artificial-fur-coat/2.jpg",
         "/products/artificial-fur-coat/3.jpg",
-        "/products/artificial-fur-coat/4.jpg"
+        "/products/artificial-fur-coat/4.jpg",
+        "/products/artificial-fur-coat/5.jpg"
     ],
     category: 'Clothing',
     supplier: 'Qksource',

@@ -32,4 +32,4 @@
 
 | 2501070601131628700 | Winter Coat Warm Lapel Long Fluffy Faux Fur Coat | Clothing | Winter Coat Warm Lapel Long Fluffy Faux Fur Coat Women. | 215ecd8a-6c18-42e0-ae7a-11531bd0c9bc.jpg |
 
-| 013894EA-BB3F-40BF-BCCE-61751D3ED6E4 | Artificial Fur Coat Jacket | Clothing | Artificial Fur Coat Jacket. Style: Light cooking. Fabric composition: Artificial fur. | 1.jpg |
+| 013894EA-BB3F-40BF-BCCE-61751D3ED6E4 | Artificial Fur Coat Jacket | Clothing | Artificial Fur Coat Jacket. Style: Light cooking. Fabric composition: Artificial fur. | 0.jpg |
