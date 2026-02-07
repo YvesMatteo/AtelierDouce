@@ -10,7 +10,7 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 #### Oversized Puffer Down Jacket
 - **Product Thumbnail**: ![Down Jacket](https://cf.cjdropshipping.com/4ac2b171-c0d0-4249-8569-37c69e2fb278.jpg)
-- **Website Price**: $69.00
+- **Website Price**: $149.00
 - **Supplier Price**: $51.82
 - **Margin**: $130.13 (71%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2000862978889248769)
