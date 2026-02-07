@@ -10,7 +10,7 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 #### Oversized Puffer Down Jacket
 - **Product Thumbnail**: ![Down Jacket](https://cf.cjdropshipping.com/4ac2b171-c0d0-4249-8569-37c69e2fb278.jpg)
-- **Website Price**: $149.00
+- **Website Price**: $69.00
 - **Supplier Price**: $51.82
 - **Margin**: $130.13 (71%)
 - **Link to CJ Dropshipping**: [View Product](https://cjdropshipping.com/product-detail.html?id=2000862978889248769)
@@ -23,8 +23,8 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 - **Margin**: $33.53 (67%)
 - **Link to QkSource**: [View Product](https://qksource.com/product/winter-coat-warm-lapel-long-fluffy-faux-fur-coat-women-loose-long-sleeve-jacket-outerwear-clothing-p-2501070601131628700.html)
 
-#### Artificial Fur Coat Jacket
-- **Product Thumbnail**: ![Artificial Fur Coat](/products/artificial-fur-coat/0.jpg)
+#### Luxurious Faux Fur Coat
+- **Product Thumbnail**: ![Luxurious Faux Fur Coat](faux-fur-coat-1.jpg)
 - **Website Price**: $69.00
 - **Supplier Price**: N/A
 - **Margin**: N/A
