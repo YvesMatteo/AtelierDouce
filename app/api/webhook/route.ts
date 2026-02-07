@@ -11,10 +11,14 @@ export async function POST(request: Request) {
     let event: Stripe.Event;
 
     try {
+        const secret = process.env.STRIPE_WEBHOOK_SECRET || '';
+        console.log(`🔑 Webhook Secret config: ${secret.substring(0, 10)}... (Length: ${secret.length})`);
+        console.log(`📨 Received Signature: ${signature ? signature.substring(0, 10) + '...' : 'MISSING'}`);
+
         event = stripe.webhooks.constructEvent(
             body,
             signature,
-            process.env.STRIPE_WEBHOOK_SECRET!
+            secret
         );
     } catch (err: any) {
         console.error('Webhook signature verification failed:', err.message);
