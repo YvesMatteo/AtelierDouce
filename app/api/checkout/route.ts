@@ -176,8 +176,8 @@ export async function POST(request: Request) {
         }
 
         // --- Calculate Shipping ---
-        // Free shipping on orders over $100, otherwise:
         // $7.00 for the first product, $5.00 for each additional product
+        // No free shipping.
         let totalShippingItems = 0;
         let cartSubtotalUSD = 0;
 
@@ -192,18 +192,11 @@ export async function POST(request: Request) {
         }
 
         let shippingCostUSD = 0;
-        const FREE_SHIPPING_THRESHOLD = 100; // $100 USD
 
-        if (cartSubtotalUSD >= FREE_SHIPPING_THRESHOLD) {
-            // Free shipping for orders over $100
-            shippingCostUSD = 0;
-        } else if (totalShippingItems > 0) {
-            // Cap the billable additional items so that shipping stops increasing after 3 products
+        if (totalShippingItems > 0) {
             // 1 item: $7
-            // 2 items: $12
-            // 3+ items: $17
-            const cappedItems = Math.min(totalShippingItems, 3);
-            shippingCostUSD = 7 + (cappedItems - 1) * 5;
+            // Additional items: +$5 each
+            shippingCostUSD = 7 + (totalShippingItems - 1) * 5;
         }
 
         const shippingCostTargetCurrency = calculatePrice(shippingCostUSD, rate);
@@ -243,7 +236,7 @@ export async function POST(request: Request) {
                             amount: shippingAmount,
                             currency: currencyCode.toLowerCase(),
                         },
-                        display_name: shippingCostUSD === 0 ? 'Free Shipping' : 'Standard Shipping',
+                        display_name: 'Standard Shipping',
                         delivery_estimate: {
                             minimum: {
                                 unit: 'business_day',

@@ -124,9 +124,6 @@ export default function ProductActions({ product, currentPrice, currencyCode }: 
                     disabled={!isSelectionComplete}
                     cjVariantId={selectedVariantId}
                 />
-                <p className="text-[11px] text-[#5e5e5e] text-center pt-2">
-                    Free shipping on all orders over $100.
-                </p>
             </div>
         </div>
     );

@@ -18,10 +18,17 @@ This document lists all products sold on **atelierdouce.shop** with their respec
 
 #### Winter Faux Fur Coat
 - **Product Thumbnail**: ![Winter Coat](https://oss.yesourcing.com/operation-center/file_202512290928012005571498424934400.png)
-- **Website Price**: $49.95
+- **Website Price**: $69.00
 - **Supplier Price**: $16.42
 - **Margin**: $33.53 (67%)
 - **Link to QkSource**: [View Product](https://qksource.com/product/winter-coat-warm-lapel-long-fluffy-faux-fur-coat-women-loose-long-sleeve-jacket-outerwear-clothing-p-2501070601131628700.html)
+
+#### Artificial Fur Coat Jacket
+- **Product Thumbnail**: ![Artificial Fur Coat](/products/artificial-fur-coat/0.jpg)
+- **Website Price**: $69.00
+- **Supplier Price**: N/A
+- **Margin**: N/A
+- **Link to QkSource**: [View Product](https://qksource.com/product/artificial-fur-coat-jacket-p-013894EA-BB3F-40BF-BCCE-61751D3ED6E4.html)
 
 #### Fur Hood Winter Jacket
 - **Product Thumbnail**: ![Hood Warm Jacket](https://yefzblyovihrvoqcqjtg.supabase.co/storage/v1/object/public/products/brown-puffer-white-1769599642151.png)
