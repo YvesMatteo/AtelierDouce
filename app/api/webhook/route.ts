@@ -5,24 +5,24 @@ import { sendOrderEmail } from '@/lib/email';
 import Stripe from 'stripe';
 
 export async function POST(request: Request) {
-    const body = await request.text();
+    const bodyBuffer = Buffer.from(await request.arrayBuffer());
     const signature = request.headers.get('stripe-signature') as string;
 
     let event: Stripe.Event;
 
     try {
         const secret = process.env.STRIPE_WEBHOOK_SECRET || '';
-        console.log(`🔑 Secret: ${secret.substring(0, 10)}... (Length: ${secret.length})`);
-        console.log(`📨 Signature: ${signature}`);
-        console.log(`📦 Body Length: ${body.length}`);
+        // console.log(`🔑 Secret: ${secret.substring(0, 10)}... (Length: ${secret.length})`);
+        // console.log(`📨 Signature: ${signature}`);
+        // console.log(`📦 Body Length: ${bodyBuffer.length}`);
 
-        if (!body || body.length === 0) {
+        if (!bodyBuffer || bodyBuffer.length === 0) {
             console.error('❌ Body is empty!');
             return NextResponse.json({ error: 'Empty Body' }, { status: 400 });
         }
 
         event = stripe.webhooks.constructEvent(
-            body,
+            bodyBuffer,
             signature,
             secret.trim() // Ensure no whitespace
         );
